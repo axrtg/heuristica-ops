@@ -966,6 +966,8 @@ async function apiPost(body){
 }
 
 // ══ SETUP ══
+window.saveScriptUrl = saveScriptUrl;
+window.testConnection = testConnection;
 function saveScriptUrl(){
   const v=document.getElementById('script-url-input').value.trim();
   if(!v||!v.startsWith('https://')){
