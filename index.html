@@ -452,8 +452,8 @@ td{padding:9px 10px;vertical-align:middle;}
   </div>
   <div id="setup-status" style="color:var(--mu);"></div>
   <div class="setup-btn-row">
-   <button class="btn bgh" onclick="testConnection()">PROBAR CONEXIÓN</button>
-   <button class="btn bg" onclick="saveScriptUrl()">GUARDAR Y ENTRAR →</button>
+   <button class="btn bgh" id="btn-test">PROBAR CONEXIÓN</button>
+   <button class="btn bg" id="btn-save">GUARDAR Y ENTRAR →</button>
   </div>
  </div>
 </div>
@@ -1756,6 +1756,10 @@ Basa las sugerencias en el calendario de posts, el mix de contenido ideal (40/30
 
 // ══════════ BOOT ══════════
 (function boot(){
+  // Conectar botones de setup
+  document.getElementById('btn-save').addEventListener('click', saveScriptUrl);
+  document.getElementById('btn-test').addEventListener('click', testConnection);
+  document.getElementById('script-url-input').addEventListener('keydown', e => { if(e.key==='Enter') saveScriptUrl(); });
   const savedUrl=LS.get('scriptUrl');
   const savedRole=LS.get('role');
 
