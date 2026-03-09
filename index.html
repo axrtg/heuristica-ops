@@ -423,37 +423,42 @@ td{padding:9px 10px;vertical-align:middle;}
    <div class="setup-logo-sub">OPS HUB · POWERED BY CONIC</div>
   </div>
   <div class="setup-title">Configuración inicial ✦</div>
-  <div class="setup-sub">Solo necesitas hacer esto UNA vez.<br>Después todos entran directo sin configurar nada.</div>
+  <div class="setup-sub">Solo el Director hace esto UNA vez.<br>Después todos entran directo seleccionando su rol.</div>
 
   <div class="setup-step">
-   <div class="setup-step-num">PASO 1 — CREAR EL BACKEND EN GOOGLE SHEETS</div>
-   <p>1. Abre <strong style="color:#fff">Google Sheets</strong> y crea una hoja en blanco → llámala <code>HEURISTICA OPS</code><br>
-      2. Menú <code>Extensions → Apps Script</code><br>
-      3. Borra todo el contenido y pega el código del archivo <code>apps_script.gs</code><br>
-      4. Guarda (Ctrl+S) → ponle nombre: <code>HeuristicaOps</code></p>
+   <div class="setup-step-num">PASO 1 — IR A TU GOOGLE APPS SCRIPT</div>
+   <p>Ve a <code>script.google.com</code> → abre el proyecto <code>HeuristicaOps</code><br>
+      Si no tienes el proyecto, ve a tu Google Sheets → <code>Extensiones → Apps Script</code></p>
   </div>
   <div class="setup-step">
-   <div class="setup-step-num">PASO 2 — PUBLICAR EL SCRIPT</div>
-   <p>1. Menú <code>Deploy → New deployment</code><br>
-      2. Tipo: <strong style="color:#fff">Web app</strong><br>
-      3. Execute as: <strong style="color:#fff">Me</strong><br>
-      4. Who has access: <strong style="color:var(--gr)">Anyone</strong> ← importante<br>
-      5. Clic en <strong style="color:#fff">Deploy</strong> → autoriza los permisos<br>
-      6. <strong style="color:var(--go)">Copia la URL</strong> que aparece (empieza con <code>https://script.google.com/...</code>)</p>
+   <div class="setup-step-num">PASO 2 — VERIFICAR / CREAR NUEVO DEPLOY</div>
+   <p>1. Menú <code>Implementar → Gestionar implementaciones</code><br>
+      2. Si ya hay una activa: copia su URL y ve al Paso 3<br>
+      3. Si no hay o quieres una nueva: <code>Implementar → Nueva implementación</code><br>
+      &nbsp;&nbsp;&nbsp;· Tipo: <strong style="color:#fff">App web</strong><br>
+      &nbsp;&nbsp;&nbsp;· Ejecutar como: <strong style="color:#fff">Yo</strong><br>
+      &nbsp;&nbsp;&nbsp;· Quién tiene acceso: <strong style="color:var(--gr)">Cualquier usuario</strong> ← CRÍTICO<br>
+      4. Haz clic en <strong style="color:#fff">Implementar</strong> y autoriza los permisos<br>
+      5. <strong style="color:var(--go)">Copia la URL</strong> (empieza con <code>https://script.google.com/macros/s/...</code>)</p>
   </div>
   <div class="setup-step">
-   <div class="setup-step-num">PASO 3 — PEGA LA URL AQUÍ</div>
+   <div class="setup-step-num">PASO 3 — PEGA LA URL Y PRUEBA</div>
    <div class="setup-input-wrap">
     <label class="setup-label">URL DEL WEB APP (Apps Script)</label>
     <input class="setup-input" id="script-url-input" 
      placeholder="https://script.google.com/macros/s/.../exec"
-     onkeydown="if(event.key==='Enter')saveScriptUrl()">
+     onkeydown="if(event.key==='Enter')testConnection()">
    </div>
   </div>
   <div id="setup-status" style="color:var(--mu);"></div>
   <div class="setup-btn-row">
    <button class="btn bgh" id="btn-test">PROBAR CONEXIÓN</button>
    <button class="btn bg" id="btn-save">GUARDAR Y ENTRAR →</button>
+  </div>
+  <div style="text-align:center;margin-top:14px;">
+   <button onclick="enterOfflineMode()" style="background:none;border:none;color:var(--mu);font-size:10px;cursor:pointer;letter-spacing:1px;font-family:'DM Mono',monospace;text-decoration:underline;">
+    entrar sin backend (modo local, solo este dispositivo)
+   </button>
   </div>
  </div>
 </div>
@@ -970,25 +975,56 @@ window.saveScriptUrl = saveScriptUrl;
 window.testConnection = testConnection;
 function saveScriptUrl(){
   const v=document.getElementById('script-url-input').value.trim();
+  const s=document.getElementById('setup-status');
   if(!v||!v.startsWith('https://')){
-    document.getElementById('setup-status').textContent='⚠ URL inválida.';
-    document.getElementById('setup-status').style.color='var(--rd)';return;
+    s.textContent='⚠ URL inválida. Debe empezar con https://';
+    s.style.color='var(--rd)';return;
   }
-  SCRIPT_URL=v;
-  LS.set('scriptUrl',v);
-  document.getElementById('setup-screen').style.display='none';
-  showRoleScreen();
+  // Redirigir a testConnection que ya tiene la lógica completa
+  testConnection();
 }
 
 async function testConnection(){
   const v=document.getElementById('script-url-input').value.trim();
-  if(!v){document.getElementById('setup-status').textContent='Pega primero la URL.';return;}
   const s=document.getElementById('setup-status');
-  s.textContent='Probando…';s.style.color='var(--go)';
+  if(!v){s.textContent='⚠ Pega primero la URL del Web App.';s.style.color='var(--rd)';return;}
+  if(!v.startsWith('https://script.google.com/')){
+    s.textContent='⚠ La URL debe empezar con https://script.google.com/';
+    s.style.color='var(--rd)';return;
+  }
+  s.textContent='⏳ Probando conexión…';s.style.color='var(--go)';
   SCRIPT_URL=v;
-  const r=await api({action:'getAllTasks'});
-  if(r.ok){s.textContent='✦ Conexión exitosa. Entrando...';s.style.color='var(--gr)';LS.set('scriptUrl',v);setTimeout(()=>{document.getElementById('setup-screen').style.display='none';showRoleScreen();},800);}
-  else{s.textContent='✕ Error: '+r.error;s.style.color='var(--rd)';}
+  try{
+    const r=await api({action:'ping'});
+    if(r.ok||r.status==='ok'||r.data!==undefined){
+      s.textContent='✦ Conexión exitosa. Entrando...';s.style.color='var(--gr)';
+      LS.set('scriptUrl',v);
+      setTimeout(()=>{document.getElementById('setup-screen').style.display='none';showRoleScreen();},800);
+      return;
+    }
+    // También intentar con getAllTasks como fallback
+    const r2=await api({action:'getAllTasks'});
+    if(r2.ok){
+      s.textContent='✦ Conexión exitosa. Entrando...';s.style.color='var(--gr)';
+      LS.set('scriptUrl',v);
+      setTimeout(()=>{document.getElementById('setup-screen').style.display='none';showRoleScreen();},800);
+    } else {
+      let msg='✕ El script respondió pero con error.';
+      if(r2.error&&r2.error.includes('Failed to fetch')) msg='✕ No se pudo alcanzar el script. Verifica que el deploy esté activo y con acceso "Anyone".';
+      else if(r2.error) msg='✕ Error del script: '+r2.error;
+      s.textContent=msg;s.style.color='var(--rd)';
+    }
+  }catch(e){
+    let msg='✕ Error de red: '+e.message;
+    if(e.message.includes('Failed to fetch')||e.message.includes('NetworkError'))
+      msg='✕ No se pudo conectar. Asegúrate de que el Apps Script esté desplegado como Web App con acceso "Anyone".';
+    s.textContent=msg;s.style.color='var(--rd)';
+  }
+}
+
+function enterOfflineMode(){
+  document.getElementById('setup-screen').style.display='none';
+  showRoleScreen();
 }
 
 function showSetup(){
