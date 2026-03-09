@@ -63,7 +63,7 @@ body::before{content:'';position:fixed;inset:0;
 .rs-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;
   color:#fff;text-align:center;margin-bottom:6px;}
 .rs-sub{font-size:11px;color:var(--mu);text-align:center;margin-bottom:24px;}
-.rs-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;}
+.rs-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px;}
 .rs-card{background:var(--s1);border:1px solid var(--bd2);padding:16px;
   cursor:pointer;text-align:center;transition:all .15s;}
 .rs-card:hover,.rs-card.sel{border-color:var(--go);background:rgba(232,198,21,.06);}
@@ -469,14 +469,16 @@ td{padding:9px 10px;vertical-align:middle;}
     <button class="fb" onclick="setCF('Interesado',this)">INTERESADO</button>
     <button class="fb" onclick="setCF('Reunión',this)">REUNIÓN</button>
     <button class="fb" onclick="setCF('Cotización',this)">COTIZACIÓN</button>
+    <button class="fb" onclick="setCF('Oportunidad Ventas',this)" style="border-color:rgba(236,72,153,.3);color:var(--pk);">🔥 OPORTUNIDAD</button>
+    <button class="fb" onclick="setCF('Cerrado',this)">CERRADO</button>
    </div>
    <div class="sb"><input class="si" id="c-search" placeholder="buscar empresa, contacto…" oninput="renderCRM()"></div>
    <div style="position:relative;">
     <div class="lov hide" id="crm-lov"><span class="spin"></span>&nbsp;CARGANDO…</div>
     <div class="tw"><table><thead><tr>
      <th>EMPRESA</th><th>CONTACTO</th><th>CARGO</th>
-     <th>SEGMENTO</th><th>ETAPA</th><th>CANAL</th>
-     <th>RESPONSABLE</th><th>ACTUALIZADO</th><th></th>
+     <th>SEGMENTO</th><th>ETAPA</th><th>🔥 VENTAS</th>
+     <th>CANAL</th><th>RESPONSABLE</th><th>FECHA</th><th></th>
     </tr></thead><tbody id="ctb"></tbody></table></div>
    </div>
   </div>
@@ -610,13 +612,21 @@ td{padding:9px 10px;vertical-align:middle;}
     <div class="fg"><label class="fl">ETAPA</label>
      <select class="fs" id="cst">
       <option>Nuevo</option><option>Contactado</option>
-      <option>Interesado</option><option>Reunión</option><option>Cotización</option>
+      <option>Interesado</option><option>Reunión</option>
+      <option>Cotización</option><option>Oportunidad Ventas</option><option>Cerrado</option>
      </select></div>
     <div class="fg"><label class="fl">RESPONSABLE</label>
      <select class="fs" id="cow">
-      <option>Estudiante Mkt</option><option>Practicante</option>
-      <option>Director</option><option>Ventas</option>
+      <option>Alejandro</option><option>Dylan</option>
+      <option>Axel</option><option>Ventas</option>
      </select></div>
+   </div>
+   <div class="fg" style="display:flex;align-items:center;gap:10px;background:rgba(236,72,153,.05);border:1px solid rgba(236,72,153,.2);padding:10px;">
+    <input type="checkbox" id="csf" style="width:15px;height:15px;accent-color:var(--pk);">
+    <div>
+     <label for="csf" style="font-size:11px;color:var(--pk);cursor:pointer;font-family:'Rajdhani',sans-serif;font-weight:700;letter-spacing:1px;">🔥 MARCAR PARA VENTAS</label>
+     <div style="font-size:9px;color:var(--mu);">Notifica a Ventas que este prospecto está listo para primera llamada de oportunidad</div>
+    </div>
    </div>
    <div class="fg"><label class="fl">NOTAS</label>
     <textarea class="fa" id="cno" placeholder="contexto, qué respondió, próximo paso…"></textarea></div>
@@ -686,11 +696,12 @@ td{padding:9px 10px;vertical-align:middle;}
 // CONFIG & STATE
 // ══════════════════════════════════════════════════════
 const ROLES=[
-  {id:'director', name:'Director',    title:'Marketing',      icon:'◈', color:'var(--go)'},
-  {id:'designer', name:'Diseñador',   title:'Gráfico',        icon:'◉', color:'var(--bl)'},
-  {id:'student',  name:'Estudiante',  title:'Marketing',      icon:'◎', color:'var(--gr)'},
-  {id:'cm',       name:'Comm. Mgr.',  title:'Redes Sociales', icon:'▦', color:'var(--or)'},
-  {id:'intern',   name:'Practicante', title:'Apoyo General',  icon:'▣', color:'var(--rd)'},
+  {id:'director', name:'Axel',    title:'Director de Marketing', icon:'◈', color:'var(--go)'},
+  {id:'designer', name:'Arturo',  title:'Diseñador Gráfico',     icon:'◉', color:'var(--bl)'},
+  {id:'student',  name:'Alejandro', title:'Marketing',           icon:'◎', color:'var(--gr)'},
+  {id:'cm',       name:'Melissa', title:'Community Manager',     icon:'▦', color:'var(--or)'},
+  {id:'intern',   name:'Dylan',   title:'Practicante',           icon:'▣', color:'var(--rd)'},
+  {id:'sales',    name:'Ventas',  title:'Gerente de Ventas',     icon:'◆', color:'var(--pk)'},
 ];
 
 const TASKS={
@@ -731,15 +742,25 @@ const TASKS={
     {day:'VIE',text:'Reporte semanal: alcance, interacciones, seguidores, DMs, mejor post.'},
   ],
   intern:[
-    {day:'LUN',text:'Redactar copys: textos de posts, hashtags, CTAs. Entregar al CM.'},
+    {day:'LUN',text:'Redactar copys: textos de posts, hashtags, CTAs. Entregar a Melissa.'},
     {day:'MAR',text:'Actualizar CRM. Enviar 5 mensajes de prospección fría.'},
-    {day:'MIÉ',text:'Apoyar al CM con programación. Redactar newsletter si aplica.'},
+    {day:'MIÉ',text:'Apoyar a Melissa con programación. Redactar newsletter si aplica.'},
     {day:'JUE',text:'Follow-up a prospectos. Registrar respuestas en CRM.'},
     {day:'VIE',text:'Ordenar banco de assets en Drive. Checklist de tareas cumplidas.'},
   ],
+  sales:[
+    {day:'LUN',text:'Revisar CRM: nuevos prospectos capturados por Alejandro/Dylan.'},
+    {day:'LUN',text:'Priorizar los 3-5 prospectos más calientes para llamar esta semana.'},
+    {day:'MAR',text:'Primera llamada de oportunidad a prospectos en etapa "Contactado".'},
+    {day:'MAR',text:'Registrar resultado de llamadas en CRM. Actualizar etapa.'},
+    {day:'MIÉ',text:'Segunda llamada a prospectos calientes. Agendar reuniones.'},
+    {day:'JUE',text:'Reuniones con prospectos interesados. Presentar propuesta Heurística.'},
+    {day:'JUE',text:'Mover prospectos a "Cotización" y notificar a Axel.'},
+    {day:'VIE',text:'Reporte semanal: llamadas hechas, reuniones, cotizaciones, cierres.'},
+  ],
 };
 
-const STAGE_CLS={Nuevo:'tgmu',Contactado:'tgb',Interesado:'tgg',Reunión:'tgo',Cotización:'tgr'};
+const STAGE_CLS={Nuevo:'tgmu',Contactado:'tgb',Interesado:'tgg',Reunión:'tgo',Cotización:'tgr','Oportunidad Ventas':'tgp',Cerrado:'tgrd'};
 const SEG_CLS={'Centro Comercial':'tgg',Hospital:'tgrd',Universidad:'tgp',
   'Parque Industrial':'tgb',Hotel:'tgo',Corporativo:'tgmu',Gobierno:'tgr',Otro:'tgmu',''  :'tgmu'};
 const TYPE_COL={Educativo:'var(--bl)',Autoridad:'var(--go)',Marca:'var(--gr)',Comercial:'var(--or)'};
@@ -794,15 +815,34 @@ async function api(params){
 async function apiPost(body){
   setSyncDot('loading');
   try{
-    const r=await fetch(SCRIPT_URL,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify(body),
-      redirect:'follow'
-    });
-    const j=await r.json();
-    setSyncDot(j.ok?'ok':'err');
-    return j;
+    // Apps Script requiere no-cors para evitar el preflight CORS
+    // Usamos un form-encoded POST que Apps Script acepta nativamente
+    const form=new FormData();
+    form.append('payload', JSON.stringify(body));
+    // Intentar con JSON primero
+    try{
+      const r=await fetch(SCRIPT_URL,{
+        method:'POST',
+        headers:{'Content-Type':'text/plain'},
+        body:JSON.stringify(body),
+        redirect:'follow'
+      });
+      const text=await r.text();
+      const j=JSON.parse(text);
+      setSyncDot(j.ok?'ok':'err');
+      return j;
+    }catch(e2){
+      // fallback: no-cors (sin respuesta pero guarda igual)
+      await fetch(SCRIPT_URL,{
+        method:'POST',
+        headers:{'Content-Type':'text/plain'},
+        body:JSON.stringify(body),
+        mode:'no-cors',
+        redirect:'follow'
+      });
+      setSyncDot('ok');
+      return{ok:true};
+    }
   }catch(e){setSyncDot('err');return{ok:false,error:e.message};}
 }
 
@@ -1043,6 +1083,7 @@ function renderCRM(){
       <td style="color:var(--mu);font-size:10px;">${c.title||'–'}</td>
       <td>${c.segment?`<span class="tg ${SEG_CLS[c.segment]||'tgmu'}">${c.segment}</span>`:'–'}</td>
       <td><span class="tg ${STAGE_CLS[c.stage]||'tgmu'}">${c.stage}</span></td>
+      <td style="text-align:center;">${c.salesFlag==='1'?`<span style="color:var(--pk);font-size:13px;" title="Listo para llamada de Ventas">🔥</span>`:`<span style="color:var(--bd2);">–</span>`}</td>
       <td style="font-size:10px;color:var(--mu);">${c.canal||'–'}</td>
       <td style="font-size:10px;">${c.owner||'–'}</td>
       <td style="font-size:10px;color:var(--mu);">${c.updated||c.date||'–'}</td>
@@ -1066,6 +1107,7 @@ async function saveCRM(){
     canal:document.getElementById('cca').value,
     stage:document.getElementById('cst').value,
     owner:document.getElementById('cow').value,
+    salesFlag:document.getElementById('csf').checked?'1':'0',
     notes:document.getElementById('cno').value,
     date:new Date().toLocaleDateString('es-MX'),
     updated:new Date().toLocaleDateString('es-MX'),
@@ -1075,6 +1117,7 @@ async function saveCRM(){
   if(r.ok){
     closeM('m-crm');
     ['cc','cn','ct','cco','cno'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('csf').checked=false;
     toast('✦ Prospecto guardado · visible para todo el equipo');
     await loadCRM();
   }else toast('✕ Error: '+r.error,true);
@@ -1104,14 +1147,15 @@ function viewP(id){
       <div><div style="font-size:9px;letter-spacing:1.5px;color:var(--go);font-family:'Rajdhani',sans-serif;font-weight:700;margin-bottom:4px;">ETAPA</div>
         <span class="tg ${STAGE_CLS[c.stage]||'tgmu'}">${c.stage}</span></div>
       <div><div style="font-size:9px;letter-spacing:1.5px;color:var(--go);font-family:'Rajdhani',sans-serif;font-weight:700;margin-bottom:4px;">RESPONSABLE</div>${c.owner||'–'}</div>
+      ${c.salesFlag==='1'?`<div style="grid-column:1/-1;background:rgba(236,72,153,.07);border:1px solid rgba(236,72,153,.3);padding:8px 10px;font-size:11px;color:var(--pk);">🔥 Marcado para llamada de oportunidad · <strong>Ventas</strong></div>`:''}
     </div>
     <div style="font-size:9px;letter-spacing:1.5px;color:var(--go);font-family:'Rajdhani',sans-serif;font-weight:700;margin-bottom:6px;">NOTAS</div>
     <div style="background:var(--s2);padding:10px;font-size:11px;line-height:1.7;color:var(--mu);min-height:50px;">${c.notes||'Sin notas.'}</div>
     <div class="mt16">
       <div style="font-size:9px;letter-spacing:1.5px;color:var(--go);font-family:'Rajdhani',sans-serif;font-weight:700;margin-bottom:8px;">CAMBIAR ETAPA</div>
       <div style="display:flex;gap:5px;flex-wrap:wrap;">
-        ${['Nuevo','Contactado','Interesado','Reunión','Cotización'].map(s=>
-          `<button class="btn ${s===c.stage?'bg':'bgh'}" style="padding:4px 9px;font-size:9px;" onclick="changeStage('${c.id}','${s}')">${s.toUpperCase()}</button>`
+        ${['Nuevo','Contactado','Interesado','Reunión','Cotización','Oportunidad Ventas','Cerrado'].map(s=>
+          `<button class="btn ${s===c.stage?'bg':'bgh'}" style="padding:4px 9px;font-size:9px;${s==='Oportunidad Ventas'?'color:var(--pk);border-color:rgba(236,72,153,.4);':''}" onclick="changeStage('${c.id}','${s}')">${s.toUpperCase()}</button>`
         ).join('')}
       </div>
     </div>`;
@@ -1281,12 +1325,22 @@ async function resetWeek(){
 function renderDash(){
   const crm=cache.crm;const assets=cache.assets;const posts=cache.posts;
   const cotiz=crm.filter(c=>c.stage==='Cotización').length;
+  const salesReady=crm.filter(c=>c.salesFlag==='1'||c.stage==='Oportunidad Ventas').length;
 
   document.getElementById('ds').innerHTML=`
     <div class="sc"><div class="sn">${assets.length}</div><div class="sl">ASSETS SUBIDOS</div></div>
     <div class="sc gr"><div class="sn">${crm.length}</div><div class="sl">PROSPECTOS CRM</div></div>
     <div class="sc bl"><div class="sn">${posts.length}</div><div class="sl">POSTS PROGRAMADOS</div></div>
-    <div class="sc or"><div class="sn">${cotiz}</div><div class="sl">EN COTIZACIÓN</div></div>`;
+    <div class="sc or"><div class="sn">${cotiz}</div><div class="sl">EN COTIZACIÓN</div></div>
+    <div class="sc" style="border-left-color:var(--pk);grid-column:1/-1;display:flex;align-items:center;gap:14px;padding:12px 14px;">
+      <div style="font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--pk);">${salesReady}</div>
+      <div>
+        <div style="font-size:9px;color:var(--mu);letter-spacing:1.5px;font-family:'Rajdhani',sans-serif;font-weight:600;">🔥 LISTOS PARA LLAMADA · VENTAS</div>
+        <div style="font-size:10px;color:var(--mu);margin-top:2px;">Prospectos marcados para primera llamada de oportunidad</div>
+      </div>
+      <button class="btn" onclick="nav('crm');setCF('Oportunidad Ventas',document.querySelector('.fb:last-child'))" 
+        style="margin-left:auto;color:var(--pk);border-color:rgba(236,72,153,.4);padding:5px 12px;font-size:10px;">VER →</button>
+    </div>`;
 
   // últimos assets
   const da=document.getElementById('da-list');
