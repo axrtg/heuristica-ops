@@ -23,7 +23,7 @@ body::before{content:'';position:fixed;inset:0;
   background-size:44px 44px;pointer-events:none;z-index:0;}
 
 /* ── SETUP SCREEN ── */
-#setup-screen{position:fixed;inset:0;z-index:300;background:var(--bg);
+#setup-screen{position:fixed;inset:0;z-index:300;background:var(--bg);overflow-y:auto;
   display:flex;align-items:center;justify-content:center;}
 .setup-box{width:100%;max-width:540px;padding:24px;}
 .setup-logo{text-align:center;margin-bottom:28px;}
@@ -446,7 +446,8 @@ td{padding:9px 10px;vertical-align:middle;}
    <div class="setup-input-wrap">
     <label class="setup-label">URL DEL WEB APP (Apps Script)</label>
     <input class="setup-input" id="script-url-input" 
-     placeholder="https://script.google.com/macros/s/.../exec">
+     placeholder="https://script.google.com/macros/s/.../exec"
+     onkeydown="if(event.key==='Enter')saveScriptUrl()">
    </div>
   </div>
   <div id="setup-status" style="color:var(--mu);"></div>
@@ -566,7 +567,7 @@ td{padding:9px 10px;vertical-align:middle;}
   <div class="page" id="page-crm">
    <div class="ph"><div class="ph-row">
     <div><div class="ph-t">CRM <span>B2B</span></div>
-    <div class="ph-s">Estudiante y practicante capturan · Director y Ventas consultan</div></div>
+    <div class="ph-s">Estudiante y practicante capturan · Axel y Ventas consultan</div></div>
     <button class="btn bg" onclick="openM('m-crm')">+ PROSPECTO</button>
    </div></div>
    <div class="frow" id="crm-frow">
@@ -594,7 +595,7 @@ td{padding:9px 10px;vertical-align:middle;}
   <div class="page" id="page-cal">
    <div class="ph"><div class="ph-row">
     <div><div class="ph-t">Calendario de <span>Contenido</span></div>
-    <div class="ph-s">CM programa · Director aprueba · nada se publica sin revisión</div></div>
+    <div class="ph-s">CM programa · Axel alinea · todos revisamos antes de publicar</div></div>
     <button class="btn bg" onclick="openM('m-cal')">+ PROGRAMAR POST</button>
    </div></div>
    <div class="row mb8" style="margin-bottom:14px;">
@@ -828,7 +829,7 @@ td{padding:9px 10px;vertical-align:middle;}
 // CONFIG & STATE
 // ══════════════════════════════════════════════════════
 const ROLES=[
-  {id:'director', name:'Axel',    title:'Director de Marketing', icon:'◈', color:'var(--go)'},
+  {id:'director', name:'Axel',    title:'Arquitecto de Marca', icon:'◈', color:'var(--go)'},
   {id:'designer', name:'Arturo',  title:'Diseñador Gráfico',     icon:'◉', color:'var(--bl)'},
   {id:'student',  name:'Alejandro', title:'Marketing',           icon:'◎', color:'var(--gr)'},
   {id:'cm',       name:'Melissa', title:'Community Manager',     icon:'▦', color:'var(--or)'},
@@ -853,7 +854,7 @@ const TASKS={
     {day:'MAR',text:'Producir 2-3 posts IG/LinkedIn. Priorizar carrusel educativo.'},
     {day:'MIÉ',text:'Infografía técnica de autoridad (ROI, proceso, normativa).'},
     {day:'MIÉ',text:'Actualizar banco de templates con nuevas variaciones.'},
-    {day:'JUE',text:'Material B2B: one-pager o brochure si lo solicita el Director.'},
+    {day:'JUE',text:'Material B2B: one-pager o brochure si el equipo lo necesita.'},
     {day:'JUE',text:'Subir assets al Banco con descripción clara.'},
     {day:'VIE',text:'Revisión final. Entregar al CM para programar.'},
     {day:'VIE',text:'Preparar 2-3 assets base para la siguiente semana.'},
@@ -984,7 +985,7 @@ async function testConnection(){
   s.textContent='Probando…';s.style.color='var(--go)';
   SCRIPT_URL=v;
   const r=await api({action:'getAllTasks'});
-  if(r.ok){s.textContent='✦ Conexión exitosa. Puedes guardar.';s.style.color='var(--gr)';}
+  if(r.ok){s.textContent='✦ Conexión exitosa. Entrando...';s.style.color='var(--gr)';LS.set('scriptUrl',v);setTimeout(()=>{document.getElementById('setup-screen').style.display='none';showRoleScreen();},800);}
   else{s.textContent='✕ Error: '+r.error;s.style.color='var(--rd)';}
 }
 
@@ -1558,7 +1559,7 @@ CONTEXTO DEL EQUIPO HOY (${today}):
 - Tareas completadas (${r.name}): ${doneTasks} de ${myTasks.length} en Semana ${checkWeek}
 
 EQUIPO:
-- Axel (Director de Marketing) — estrategia, aprobaciones, coordinación
+- Axel (Arquitecto de Marca) — visión estratégica, alineación y sinergia del equipo
 - Arturo (Diseñador Gráfico) — piezas visuales, banco de assets
 - Alejandro (Marketing) — CRM, métricas, research
 - Melissa (Community Manager) — redes, programación, engagement
