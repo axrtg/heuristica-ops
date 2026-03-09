@@ -813,36 +813,22 @@ async function api(params){
 }
 
 async function apiPost(body){
+  // Apps Script bloquea POST con CORS desde páginas externas.
+  // Solución: enviar todo como GET params — mismo endpoint, sin preflight, respuesta completa.
   setSyncDot('loading');
   try{
-    // Apps Script requiere no-cors para evitar el preflight CORS
-    // Usamos un form-encoded POST que Apps Script acepta nativamente
-    const form=new FormData();
-    form.append('payload', JSON.stringify(body));
-    // Intentar con JSON primero
-    try{
-      const r=await fetch(SCRIPT_URL,{
-        method:'POST',
-        headers:{'Content-Type':'text/plain'},
-        body:JSON.stringify(body),
-        redirect:'follow'
-      });
-      const text=await r.text();
-      const j=JSON.parse(text);
-      setSyncDot(j.ok?'ok':'err');
-      return j;
-    }catch(e2){
-      // fallback: no-cors (sin respuesta pero guarda igual)
-      await fetch(SCRIPT_URL,{
-        method:'POST',
-        headers:{'Content-Type':'text/plain'},
-        body:JSON.stringify(body),
-        mode:'no-cors',
-        redirect:'follow'
-      });
-      setSyncDot('ok');
-      return{ok:true};
-    }
+    const params=new URLSearchParams({
+      action: body.action||'',
+      sheet:  body.sheet||'',
+      id:     String(body.id||''),
+      key:    body.key||'',
+      value:  body.value!==undefined ? String(body.value) : '',
+      data:   body.data ? JSON.stringify(body.data) : ''
+    });
+    const r=await fetch(SCRIPT_URL+'?'+params,{redirect:'follow'});
+    const j=await r.json();
+    setSyncDot(j.ok?'ok':'err');
+    return j;
   }catch(e){setSyncDot('err');return{ok:false,error:e.message};}
 }
 
