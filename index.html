@@ -1797,8 +1797,9 @@ Basa las sugerencias en el calendario de posts, el mix de contenido ideal (40/30
   document.getElementById('btn-test').addEventListener('click', testConnection);
   document.getElementById('script-url-input').addEventListener('keydown', e => { if(e.key==='Enter') saveScriptUrl(); });
 
-  // URL ya está hardcodeada — saltar setup directo
-  document.getElementById('setup-screen').style.display='none';
+  // Mostrar setup — el usuario debe pegar su URL del script
+  document.getElementById('setup-screen').style.display='flex';
+  var savedUrl=LS.get('scriptUrl');if(savedUrl){SCRIPT_URL=savedUrl;document.getElementById('script-url-input').value=savedUrl;}
   const savedRole=LS.get('role');
 
   document.getElementById('pd').value=new Date().toISOString().slice(0,10);
