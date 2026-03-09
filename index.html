@@ -1612,8 +1612,7 @@ SOBRE HEURISTICA:
 - Mercado renuente → requiere mucha educación y contenido de autoridad
 
 PROSPECTOS RECIENTES EN CRM:
-${crm.slice(0,8).map(c => `- ${c.company} (${c.segment||'–'}) · ${c.stage} · Resp: ${c.owner||'–'}${c.salesFlag==='1'?' 🔥':''}`).join('
-') || 'Sin prospectos aún'}
+${crm.slice(0,8).map(c => '- ' + c.company + ' (' + (c.segment||'–') + ') · ' + c.stage + ' · Resp: ' + (c.owner||'–') + (c.salesFlag==='1'?' 🔥':'')).join('\n') || 'Sin prospectos aún'}\n
 
 INSTRUCCIONES DE COMPORTAMIENTO:
 - Tu enfoque principal es CONTENIDO y ESTRATEGIA DE MARKETING, no operaciones.
