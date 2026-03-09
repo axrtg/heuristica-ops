@@ -317,6 +317,96 @@ td{padding:9px 10px;vertical-align:middle;}
 .mt16{margin-top:16px;}
 .mb8{margin-bottom:8px;}
 
+
+/* ══ AGENTE IA ══ */
+#agent-fab{position:fixed;bottom:24px;right:24px;z-index:500;
+  width:52px;height:52px;border-radius:50%;
+  background:linear-gradient(135deg,var(--az2),var(--az3));
+  border:2px solid var(--gr);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;box-shadow:0 0 20px rgba(54,207,3,.25);
+  transition:all .2s;}
+#agent-fab:hover{transform:scale(1.08);box-shadow:0 0 30px rgba(54,207,3,.4);}
+#agent-fab.active{border-color:var(--go);box-shadow:0 0 30px rgba(232,198,21,.4);}
+@keyframes fab-pulse{0%,100%{box-shadow:0 0 20px rgba(54,207,3,.25)}
+  50%{box-shadow:0 0 35px rgba(54,207,3,.55)}}
+#agent-fab.thinking{animation:fab-pulse .9s infinite;}
+
+#agent-panel{position:fixed;bottom:88px;right:24px;z-index:499;
+  width:380px;max-height:75vh;
+  background:var(--s1);border:1px solid var(--go);
+  display:flex;flex-direction:column;
+  transform:translateY(20px) scale(.97);opacity:0;
+  pointer-events:none;transition:all .22s cubic-bezier(.4,0,.2,1);}
+#agent-panel.open{transform:translateY(0) scale(1);opacity:1;pointer-events:all;}
+
+.ap-head{background:var(--az2);padding:12px 14px;
+  border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:8px;}
+.ap-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:800;
+  color:var(--go);flex:1;letter-spacing:.5px;}
+.ap-sub{font-size:9px;color:var(--mu);letter-spacing:1px;}
+.ap-close{background:none;border:none;color:var(--mu);cursor:pointer;font-size:15px;}
+.ap-close:hover{color:var(--rd);}
+
+.ap-ctx{padding:8px 12px;background:var(--s2);
+  border-bottom:1px solid var(--bd2);
+  font-size:9px;color:var(--mu);letter-spacing:.5px;line-height:1.6;}
+.ap-ctx span{color:var(--gr);}
+
+.ap-msgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;min-height:120px;}
+.ap-msgs::-webkit-scrollbar{width:3px;}
+.ap-msgs::-webkit-scrollbar-thumb{background:var(--bd);}
+
+.msg{max-width:92%;padding:9px 12px;font-size:11px;line-height:1.65;}
+.msg.ai{background:rgba(232,198,21,.06);border:1px solid rgba(232,198,21,.12);
+  align-self:flex-start;border-radius:0 8px 8px 8px;}
+.msg.user{background:rgba(54,207,3,.06);border:1px solid rgba(54,207,3,.12);
+  align-self:flex-end;border-radius:8px 0 8px 8px;color:var(--gr);}
+.msg.ai .msg-name{font-size:8px;letter-spacing:1.5px;color:var(--go);
+  font-family:'Rajdhani',sans-serif;font-weight:700;margin-bottom:4px;}
+.msg-typing{display:flex;gap:4px;align-items:center;padding:4px 0;}
+.dot{width:5px;height:5px;border-radius:50%;background:var(--go);
+  animation:blink 1.2s infinite;}
+.dot:nth-child(2){animation-delay:.2s;}
+.dot:nth-child(3){animation-delay:.4s;}
+@keyframes blink{0%,80%,100%{opacity:.2}40%{opacity:1}}
+
+.ap-suggestions{padding:8px 12px;border-top:1px solid var(--bd2);}
+.ap-sug-label{font-size:8px;letter-spacing:1.5px;color:var(--mu);
+  font-family:'Rajdhani',sans-serif;margin-bottom:5px;}
+.sug-chips{display:flex;gap:4px;flex-wrap:wrap;}
+.chip{padding:3px 8px;font-size:9px;background:var(--s2);
+  border:1px solid var(--bd2);color:var(--mu);cursor:pointer;
+  font-family:'Rajdhani',sans-serif;letter-spacing:.5px;transition:all .1s;}
+.chip:hover{border-color:var(--go);color:var(--go);}
+
+.ap-input{display:flex;border-top:1px solid var(--bd);gap:0;}
+.ap-in{flex:1;background:var(--s2);border:none;color:var(--tx);
+  padding:10px 12px;font-family:'DM Mono',monospace;font-size:11px;outline:none;}
+.ap-in::placeholder{color:var(--mu);}
+.ap-send{background:var(--go);border:none;color:#000;padding:0 14px;
+  font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;
+  cursor:pointer;letter-spacing:1px;transition:background .1s;}
+.ap-send:hover{background:#f5d52a;}
+.ap-send:disabled{background:var(--s3);color:var(--mu);cursor:not-allowed;}
+
+/* sugerencias en dashboard */
+#ai-dash-card{background:var(--s1);border:1px solid rgba(54,207,3,.2);
+  padding:14px;position:relative;overflow:hidden;}
+#ai-dash-card::before{content:'✦ AGENTE IA';position:absolute;top:10px;right:12px;
+  font-size:8px;letter-spacing:2px;color:var(--gr);opacity:.5;
+  font-family:'Rajdhani',sans-serif;font-weight:700;}
+.ai-suggestion{display:flex;gap:10px;padding:8px 0;
+  border-bottom:1px solid var(--bd2);}
+.ai-suggestion:last-child{border-bottom:none;padding-bottom:0;}
+.ai-s-icon{font-size:14px;flex-shrink:0;margin-top:1px;}
+.ai-s-body{flex:1;}
+.ai-s-who{font-size:8px;letter-spacing:1.5px;font-family:'Rajdhani',sans-serif;
+  font-weight:700;margin-bottom:2px;}
+.ai-s-text{font-size:10px;color:var(--tx);line-height:1.6;}
+.ai-s-action{font-size:9px;color:var(--go);margin-top:3px;cursor:pointer;}
+.ai-s-action:hover{text-decoration:underline;}
+
 /* loader spin */
 @keyframes spin{to{transform:rotate(360deg)}}
 .spin{display:inline-block;width:12px;height:12px;border:2px solid var(--bd);
@@ -410,6 +500,9 @@ td{padding:9px 10px;vertical-align:middle;}
    <span class="ni">▦</span>Calendario<span class="nc" id="c-cal">0</span></button>
   <button class="nb" onclick="nav('tasks')" id="nav-tasks">
    <span class="ni">▣</span>Tareas<span class="nc" id="c-tasks">–</span></button>
+  <div class="ns" style="margin-top:10px;">INTELIGENCIA</div>
+  <button class="nb" onclick="toggleAgent()" id="nav-agent">
+   <span class="ni">✦</span>Agente IA<span class="nc" style="background:rgba(54,207,3,.15);color:var(--gr);">●</span></button>
   <div class="sbfoot">
    <div style="display:flex;align-items:center;gap:8px;">
     <div class="uav" id="sb-av">–</div>
@@ -433,9 +526,23 @@ td{padding:9px 10px;vertical-align:middle;}
    <div class="stats" id="ds"></div>
    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
     <div><div class="sl2">ÚLTIMOS ASSETS</div><div id="da-list"></div></div>
-    <div><div class="sl2">PROSPECTOS RECIENTES</div><div id="dc-list"></div></div>
+    <div><div class="sl2">ASSETS POR CANAL</div><div id="da-canal"></div></div>
    </div>
-   <div class="mt16"><div class="sl2">PROGRESO DE TAREAS POR PERSONA (SEMANA ACTUAL)</div>
+   <div class="mt16">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+     <div>
+      <div class="sl2" style="display:flex;align-items:center;gap:6px;">
+       <span style="color:var(--gr);">✦</span> ESTRATEGIA DEL DÍA · AGENTE IA
+       <button onclick="generateDashSuggestions()" style="background:none;border:none;
+        color:var(--mu);cursor:pointer;font-size:10px;margin-left:4px;" title="Actualizar">↺</button>
+      </div>
+      <div id="ai-dash-card"><div id="ai-suggestions-body">
+       <div style="color:var(--mu);font-size:10px;padding:8px 0;">Abriendo el hub… el agente analizará tu contexto automáticamente.</div>
+      </div></div>
+     </div>
+     <div><div class="sl2">PROSPECTOS RECIENTES</div><div id="dc-list"></div></div>
+    </div>
+    <div class="sl2">PROGRESO DE TAREAS POR PERSONA (SEMANA ACTUAL)</div>
     <div id="dp"></div></div>
   </div>
 
@@ -689,6 +796,31 @@ td{padding:9px 10px;vertical-align:middle;}
  </div>
 </div>
 
+
+<!-- ══ AGENTE IA ══ -->
+<button id="agent-fab" onclick="toggleAgent()" title="Agente IA · HEURISTICA">✦</button>
+
+<div id="agent-panel">
+ <div class="ap-head">
+  <div>
+   <div class="ap-title">✦ Agente HEURISTICA</div>
+   <div class="ap-sub" id="ap-ctx-line">Estrategia · Contenido · Calendario</div>
+  </div>
+  <button class="ap-close" onclick="toggleAgent()">✕</button>
+ </div>
+ <div class="ap-ctx" id="ap-ctx-bar">Cargando datos del equipo…</div>
+ <div class="ap-msgs" id="ap-msgs"></div>
+ <div class="ap-suggestions">
+  <div class="ap-sug-label">PREGUNTAS RÁPIDAS</div>
+  <div class="sug-chips" id="ap-chips"></div>
+ </div>
+ <div class="ap-input">
+  <input class="ap-in" id="ap-in" placeholder="¿Qué publico hoy? ¿Cómo va la estrategia?…"
+   onkeydown="if(event.key==='Enter')agentSend()">
+  <button class="ap-send" id="ap-send-btn" onclick="agentSend()">ENVIAR</button>
+ </div>
+</div>
+
 <div id="toast">✦ Guardado</div>
 
 <script>
@@ -884,6 +1016,7 @@ function enterApp(){
   document.getElementById('role-screen').classList.remove('open');
   applyRole();
   refreshAll();
+  setTimeout(() => generateDashSuggestions(), 1800);
 }
 
 function showRoleScreen(){
@@ -1376,6 +1509,248 @@ function renderDash(){
     </div>`;
 }
 
+
+// ══════════════════════════════════════════════════════
+// AGENTE IA · HEURISTICA OPS HUB
+// ══════════════════════════════════════════════════════
+let agentOpen = false;
+let agentHistory = [];
+let agentThinking = false;
+
+const AGENT_CHIPS = {
+  director: ['¿Qué publicamos esta semana?','¿Qué tipo de contenido nos falta?','Dame el ritmo de contenido ideal','¿Cómo balanceo el mix educativo/comercial?'],
+  designer: ['¿Qué piezas son urgentes esta semana?','¿Qué formato funciona mejor para LinkedIn?','¿Cómo hago un carrusel de electromovilidad efectivo?','Dame ideas para una infografía de ROI'],
+  student:  ['¿Qué tendencias de EV puedo investigar hoy?','¿Qué tipo de contenido genera más leads B2B?','¿Cómo estructuro un reporte de métricas?','Dame ideas de contenido educativo'],
+  cm:       ['¿Qué publico hoy en Instagram?','¿Qué publico hoy en LinkedIn?','Dame un copy para electrolineras','¿Qué tipo de historia funciona mejor esta semana?'],
+  intern:   ['Dame ideas de copy para esta semana','¿Qué hashtags usar para electromovilidad?','¿Cómo hacer un post educativo que enganche?','¿Qué tendencias puedo aprovechar hoy?'],
+  sales:    ['¿Qué contenido comparto con mis prospectos?','Dame argumentos de venta para centros comerciales','¿Qué objeciones suelen tener y cómo responder?','¿Cómo presento el ROI de una electrolinera?'],
+};
+
+function buildAgentContext(){
+  const r = currentRole || {name:'Usuario', id:'director', title:'–'};
+  const crm = cache.crm || [];
+  const assets = cache.assets || [];
+  const posts = cache.posts || [];
+  const tasks = cache.tasks || {};
+  const myTasks = TASKS[r.id] || [];
+  const doneTasks = myTasks.filter((_,i) => tasks[r.id+'_w'+checkWeek+'_'+i]).length;
+  const today = new Date().toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'});
+  const pendingCRM = crm.filter(c => c.stage === 'Nuevo' || c.stage === 'Contactado').length;
+  const salesReady = crm.filter(c => c.salesFlag === '1' || c.stage === 'Oportunidad Ventas').length;
+  const postsThisWeek = posts.filter(p => {
+    const d = new Date(p.date); const n = new Date();
+    const diff = (d - n) / 86400000;
+    return diff >= 0 && diff <= 7;
+  }).length;
+
+  const ctxBar = `Hoy: ${today} · ${r.name} (${r.title}) · Tareas: ${doneTasks}/${myTasks.length} · CRM: ${crm.length} prospectos`;
+  document.getElementById('ap-ctx-bar').innerHTML = ctxBar;
+  document.getElementById('ap-ctx-line').textContent = `${r.name} · ${r.title}`;
+
+  return `Eres el Agente IA del OPS HUB de HEURISTICA, empresa de electrolineras e infraestructura de carga eléctrica B2B en México y LATAM. 
+Tu misión es ayudar al equipo de marketing y ventas de CONIC (agencia que dirige el marketing de HEURISTICA) a trabajar mejor.
+
+CONTEXTO DEL EQUIPO HOY (${today}):
+- Usuario activo: ${r.name} · ${r.title}
+- CRM: ${crm.length} prospectos totales. Nuevos/Contactados sin seguimiento: ${pendingCRM}. Listos para Ventas: ${salesReady}.
+- Assets en banco: ${assets.length}
+- Posts programados próxima semana: ${postsThisWeek}
+- Tareas completadas (${r.name}): ${doneTasks} de ${myTasks.length} en Semana ${checkWeek}
+
+EQUIPO:
+- Axel (Director de Marketing) — estrategia, aprobaciones, coordinación
+- Arturo (Diseñador Gráfico) — piezas visuales, banco de assets
+- Alejandro (Marketing) — CRM, métricas, research
+- Melissa (Community Manager) — redes, programación, engagement
+- Dylan (Practicante) — apoyo, copys, prospección fría
+- Ventas/Gerente — llamadas de oportunidad, cierre
+
+SOBRE HEURISTICA:
+- Vende electrolineras (estaciones de carga EV) para complejos con alto flujo de personas
+- Segmentos: Centros Comerciales, Hospitales, Universidades, Parques Industriales, Hoteles
+- Valores de marca: sostenibilidad integral, impacto real
+- Sitio: heuristica.energy
+- Mercado renuente → requiere mucha educación y contenido de autoridad
+
+PROSPECTOS RECIENTES EN CRM:
+${crm.slice(0,8).map(c => `- ${c.company} (${c.segment||'–'}) · ${c.stage} · Resp: ${c.owner||'–'}${c.salesFlag==='1'?' 🔥':''}`).join('
+') || 'Sin prospectos aún'}
+
+INSTRUCCIONES DE COMPORTAMIENTO:
+- Tu enfoque principal es CONTENIDO y ESTRATEGIA DE MARKETING, no operaciones.
+- Habla en español mexicano, tono profesional pero cercano y motivador.
+- Cuando alguien pregunte qué publicar, da ideas concretas: tema, formato, copy sugerido, mejor hora.
+- Para estrategia semanal: analiza el mix de contenido (40% educativo, 30% autoridad, 20% marca, 10% comercial) y sugiere ajustes.
+- Da tips de copywriting para electromovilidad B2B cuando sea relevante.
+- Si hay posts programados en el calendario, úsalos para dar contexto.
+- Máximo 3-4 párrafos por respuesta, directo al grano.
+- Eres el copiloto creativo y estratégico del equipo. Inspira y orienta sin imponer.`;
+}
+
+function toggleAgent(){
+  agentOpen = !agentOpen;
+  const panel = document.getElementById('agent-panel');
+  const fab = document.getElementById('agent-fab');
+  if(agentOpen){
+    panel.classList.add('open');
+    fab.classList.add('active');
+    // Chips por rol
+    const chips = AGENT_CHIPS[currentRole?.id||'director'] || AGENT_CHIPS.director;
+    document.getElementById('ap-chips').innerHTML = chips.map(c=>
+      `<span class="chip" onclick="agentAsk('${c}')">${c}</span>`).join('');
+    // Saludo inicial si no hay historial
+    if(agentHistory.length === 0){
+      setTimeout(() => agentAutoGreet(), 300);
+    }
+    document.getElementById('ap-in').focus();
+  } else {
+    panel.classList.remove('open');
+    fab.classList.remove('active');
+  }
+}
+
+async function agentAutoGreet(){
+  const r = currentRole || {name:'equipo'};
+  const hour = new Date().getHours();
+  const greeting = hour < 13 ? 'Buenos días' : hour < 19 ? 'Buenas tardes' : 'Buenas noches';
+  const ctx = buildAgentContext();
+  const prompt = `${ctx}
+
+El usuario acaba de abrir el OPS HUB. Da un saludo corto y amigable a ${r.name}, 
+  menciona 1-2 cosas importantes que deberían atender hoy basándote en el contexto. Máximo 3 oraciones.`;
+  await agentCall(prompt, true);
+}
+
+function agentAsk(text){
+  document.getElementById('ap-in').value = text;
+  agentSend();
+}
+
+async function agentSend(){
+  const input = document.getElementById('ap-in');
+  const text = input.value.trim();
+  if(!text || agentThinking) return;
+  input.value = '';
+  addMsg('user', text);
+  const ctx = buildAgentContext();
+  const histStr = agentHistory.slice(-6).map(m => 
+    `${m.role === 'user' ? 'Usuario' : 'Agente'}: ${m.content}`).join('
+');
+  const prompt = `${ctx}
+
+CONVERSACIÓN PREVIA:
+${histStr}
+
+Usuario: ${text}
+
+Agente:`;
+  await agentCall(prompt, false, text);
+}
+
+async function agentCall(prompt, isGreet=false, userMsg=''){
+  agentThinking = true;
+  document.getElementById('agent-fab').classList.add('thinking');
+  document.getElementById('ap-send-btn').disabled = true;
+  const typingId = 'typing-'+Date.now();
+  addTyping(typingId);
+  try{
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const data = await response.json();
+    const reply = data.content?.[0]?.text || 'No pude procesar esa pregunta. Intenta de nuevo.';
+    removeTyping(typingId);
+    addMsg('ai', reply);
+    if(userMsg) agentHistory.push({role:'user', content:userMsg});
+    agentHistory.push({role:'ai', content:reply});
+  }catch(e){
+    removeTyping(typingId);
+    addMsg('ai', '⚠ Error de conexión con el agente. Verifica tu internet.');
+  }
+  agentThinking = false;
+  document.getElementById('agent-fab').classList.remove('thinking');
+  document.getElementById('ap-send-btn').disabled = false;
+}
+
+function addMsg(role, text){
+  const msgs = document.getElementById('ap-msgs');
+  const div = document.createElement('div');
+  div.className = 'msg ' + role;
+  if(role === 'ai') div.innerHTML = '<div class="msg-name">✦ AGENTE HEURISTICA</div>' + 
+    text.replace(/
+/g,'<br>');
+  else div.textContent = text;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function addTyping(id){
+  const msgs = document.getElementById('ap-msgs');
+  const div = document.createElement('div');
+  div.className = 'msg ai'; div.id = id;
+  div.innerHTML = '<div class="msg-name">✦ AGENTE HEURISTICA</div><div class="msg-typing"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function removeTyping(id){
+  document.getElementById(id)?.remove();
+}
+
+// Sugerencias automáticas en dashboard
+async function generateDashSuggestions(){
+  const body = document.getElementById('ai-suggestions-body');
+  body.innerHTML = '<div style="color:var(--mu);font-size:10px;padding:8px 0;display:flex;gap:6px;align-items:center;"><span class="spin"></span> Analizando contexto del equipo…</div>';
+  const r = currentRole || {name:'Equipo', id:'director'};
+  const ctx = buildAgentContext();
+  const prompt = `${ctx}
+
+Genera exactamente 3 sugerencias estratégicas de contenido y marketing para el equipo hoy.
+Enfócate principalmente en: qué publicar, qué tipo de contenido falta, cómo mejorar la estrategia semanal.
+Responde ÚNICAMENTE en formato JSON, sin markdown, sin texto extra:
+[
+  {"who": "Nombre del responsable", "icon": "emoji", "text": "sugerencia de contenido o estrategia en 1-2 oraciones concretas", "action": "pregunta corta para profundizar"},
+  {"who": "...", "icon": "...", "text": "...", "action": "..."},
+  {"who": "...", "icon": "...", "text": "...", "action": "..."}
+]
+Basa las sugerencias en el calendario de posts, el mix de contenido ideal (40/30/20/10) y el contexto del sector electromovilidad B2B. Sé creativo y accionable.`;
+
+  try{
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 600,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const data = await response.json();
+    const raw = data.content?.[0]?.text || '[]';
+    const clean = raw.replace(/```json|```/g,'').trim();
+    const suggestions = JSON.parse(clean);
+    const roleColors = {Axel:'var(--go)',Arturo:'var(--bl)',Alejandro:'var(--gr)',
+      Melissa:'var(--or)',Dylan:'var(--rd)',Ventas:'var(--pk)'};
+    body.innerHTML = suggestions.map(s => `
+      <div class="ai-suggestion">
+        <div class="ai-s-icon">${s.icon||'✦'}</div>
+        <div class="ai-s-body">
+          <div class="ai-s-who" style="color:${roleColors[s.who]||'var(--go)'};">${(s.who||'Equipo').toUpperCase()}</div>
+          <div class="ai-s-text">${s.text}</div>
+          <div class="ai-s-action" onclick="toggleAgent();agentAsk('${s.action.replace(/'/g,"\'")}')">→ ${s.action}</div>
+        </div>
+      </div>`).join('');
+  }catch(e){
+    body.innerHTML = '<div style="color:var(--mu);font-size:10px;padding:8px 0;">No se pudo conectar al agente. <span style="color:var(--go);cursor:pointer;" onclick="generateDashSuggestions()">Reintentar →</span></div>';
+  }
+}
+
 // ══════════ BOOT ══════════
 (function boot(){
   const savedUrl=LS.get('scriptUrl');
@@ -1399,6 +1774,8 @@ function renderDash(){
     renderDash();updateCounts();
     // then refresh from sheets
     refreshAll();
+    // auto-sugerencias del agente al cargar
+    setTimeout(() => generateDashSuggestions(), 2000);
   }
   // else setup screen stays visible
 })();
