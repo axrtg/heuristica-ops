@@ -903,7 +903,7 @@ const TYPE_EMJ={'Post IG':'📸','Post LinkedIn':'💼',Carrusel:'🃏',Story:'�
 const DAYS=['LUN','MAR','MIÉ','JUE','VIE','SÁB','DOM'];
 const CHANNELS=['Instagram','LinkedIn','Facebook','WhatsApp'];
 
-let SCRIPT_URL='';
+let SCRIPT_URL='https://script.google.com/macros/s/AKfycbxofhuTVxa_1MHp03jt8fgAz7TTds8oAoPfLJn0sTkFSB5Pc8C7fBBXhdjubgWtQZrm/exec';
 let currentRole=null;
 let cfilt='all';
 let calOff=0;
@@ -1756,35 +1756,29 @@ Basa las sugerencias en el calendario de posts, el mix de contenido ideal (40/30
 
 // ══════════ BOOT ══════════
 (function boot(){
-  // Conectar botones de setup
+  // Conectar botones de setup (por si acaso)
   document.getElementById('btn-save').addEventListener('click', saveScriptUrl);
   document.getElementById('btn-test').addEventListener('click', testConnection);
   document.getElementById('script-url-input').addEventListener('keydown', e => { if(e.key==='Enter') saveScriptUrl(); });
-  const savedUrl=LS.get('scriptUrl');
+
+  // URL ya está hardcodeada — saltar setup directo
+  document.getElementById('setup-screen').style.display='none';
   const savedRole=LS.get('role');
 
   document.getElementById('pd').value=new Date().toISOString().slice(0,10);
 
-  if(savedUrl){
-    SCRIPT_URL=savedUrl;
-    document.getElementById('setup-screen').style.display='none';
-    const idx=savedRole?ROLES.findIndex(r=>r.id===savedRole):0;
-    if(idx<0||!savedRole){showRoleScreen();return;}
-    selIdx=idx>=0?idx:0;
-    currentRole=ROLES[selIdx];
-    applyRole();
-    // load from cache first for instant UI
-    cache.assets=LS.get('assets')||[];
-    cache.crm=LS.get('crm')||[];
-    cache.posts=LS.get('posts')||[];
-    cache.tasks=LS.get('tasks')||{};
-    renderDash();updateCounts();
-    // then refresh from sheets
-    refreshAll();
-    // auto-sugerencias del agente al cargar
-    setTimeout(() => generateDashSuggestions(), 2000);
-  }
-  // else setup screen stays visible
+  const idx=savedRole?ROLES.findIndex(r=>r.id===savedRole):-1;
+  if(idx<0||!savedRole){showRoleScreen();return;}
+  selIdx=idx;
+  currentRole=ROLES[selIdx];
+  applyRole();
+  cache.assets=LS.get('assets')||[];
+  cache.crm=LS.get('crm')||[];
+  cache.posts=LS.get('posts')||[];
+  cache.tasks=LS.get('tasks')||{};
+  renderDash();updateCounts();
+  refreshAll();
+  setTimeout(() => generateDashSuggestions(), 2000);
 })();
 </script>
 </body>
