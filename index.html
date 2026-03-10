@@ -256,11 +256,13 @@ textarea{resize:vertical;min-height:80px}
     <div class="login-title">¿QUIÉN ERES?</div>
     <div class="roles-grid" id="roles-grid">
       <div class="role-btn" style="grid-column:1/-1;border-color:rgba(232,198,21,0.5);background:rgba(232,198,21,0.06)" onclick="selectRole(this,'Mario','CEO · Heuristica')"><div class="role-name" style="color:var(--amarillo)">⭐ Mario Alcalá</div><div class="role-title">CEO · Heuristica</div></div>
-      <div class="role-btn" onclick="selectRole(this,'Axel','Director de Marketing')"><div class="role-name">Axel</div><div class="role-title">Director de Marketing</div></div>
+      <div class="role-btn" onclick="selectRole(this,'Axel','Marketing Lead')"><div class="role-name">Axel</div><div class="role-title">Marketing Lead</div></div>
       <div class="role-btn" onclick="selectRole(this,'Arturo','Diseñador Gráfico')"><div class="role-name">Arturo</div><div class="role-title">Diseñador Gráfico</div></div>
-      <div class="role-btn" onclick="selectRole(this,'Alejandro','Estudiante de Marketing')"><div class="role-name">Alejandro</div><div class="role-title">Estudiante de Marketing</div></div>
-      <div class="role-btn" onclick="selectRole(this,'Melissa','Community Manager')"><div class="role-name">Melissa</div><div class="role-title">Community Manager</div></div>
-      <div class="role-btn" onclick="selectRole(this,'Dylan','Practicante')"><div class="role-name">Dylan</div><div class="role-title">Practicante</div></div>
+      <div class="role-btn" onclick="selectRole(this,'Alejandro','Marketing Analytics')"><div class="role-name">Alejandro</div><div class="role-title">Marketing Analytics</div></div>
+      <div class="role-btn" onclick="selectRole(this,'MelissaG','Community Manager')"><div class="role-name">Melissa G.</div><div class="role-title">Community Manager</div></div>
+      <div class="role-btn" onclick="selectRole(this,'Dylan','Becario')"><div class="role-name">Dylan</div><div class="role-title">Becario</div></div>
+      <div class="role-btn" onclick="selectRole(this,'MelissaA','Diseño Visual')"><div class="role-name">Melissa A.</div><div class="role-title">Diseño Visual</div></div>
+      <div class="role-btn" onclick="selectRole(this,'Jorge','Becario · Sistemas')"><div class="role-name">Jorge A.</div><div class="role-title">Becario · Sistemas</div></div>
     </div>
     <button class="btn btn-primary" onclick="enterApp()" id="login-btn" disabled>Entrar al Hub</button>
     <button class="btn btn-secondary" style="margin-top:8px" onclick="reconfig()">⚙️ Reconfigurar backend</button>
@@ -308,7 +310,7 @@ textarea{resize:vertical;min-height:80px}
           </select>
           <select class="setup-input filter-select" id="crm-filter-owner" onchange="renderCRM()">
             <option value="">Todos</option>
-            <option>Mario</option><option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa</option><option>Dylan</option>
+            <option>Mario</option><option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa G.</option><option>Melissa A.</option><option>Dylan</option><option>Jorge</option>
           </select>
         </div>
         <div id="crm-pipeline"></div>
@@ -368,7 +370,7 @@ textarea{resize:vertical;min-height:80px}
           <div class="actions">
             <select class="setup-input filter-select" id="task-filter-assignee" onchange="renderTasks()">
               <option value="">Todos</option>
-              <option>Mario</option><option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa</option><option>Dylan</option>
+              <option>Mario</option><option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa G.</option><option>Melissa A.</option><option>Dylan</option><option>Jorge</option>
             </select>
             <button class="btn btn-primary btn-sm" onclick="openModal('task-modal')">+ Nueva tarea</button>
           </div>
@@ -385,7 +387,7 @@ textarea{resize:vertical;min-height:80px}
           <div class="actions">
             <select class="setup-input filter-select" id="guide-role-filter" onchange="renderGuide()">
               <option value="">Todos los roles</option>
-              <option>Mario</option><option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa</option><option>Dylan</option>
+              <option>Mario</option><option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa G.</option><option>Melissa A.</option><option>Dylan</option><option>Jorge</option>
             </select>
           </div>
         </div>
@@ -423,7 +425,7 @@ textarea{resize:vertical;min-height:80px}
         <select id="crm-stage"><option>Prospecto</option><option>Contactado</option><option>Interesado</option><option>Propuesta</option><option>Negociación</option><option>Cerrado ✓</option><option>Descartado</option></select>
       </div>
       <div class="form-group"><label>Responsable</label>
-        <select id="crm-owner"><option>Mario</option><option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa</option><option>Dylan</option></select>
+        <select id="crm-owner"><option>Mario</option><option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa G.</option><option>Melissa A.</option><option>Dylan</option><option>Jorge</option></select>
       </div>
       <div class="form-group"><label>🔥 Oportunidad de venta</label>
         <select id="crm-salesflag"><option value="0">No</option><option value="1">Sí — marcar como hot lead</option></select>
@@ -481,7 +483,7 @@ textarea{resize:vertical;min-height:80px}
         <select id="post-status"><option>Borrador</option><option>En revisión</option><option>Programado</option><option>Publicado</option></select>
       </div>
       <div class="form-group"><label>Autor</label>
-        <select id="post-author"><option>Mario</option><option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa</option><option>Dylan</option></select>
+        <select id="post-author"><option>Mario</option><option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa G.</option><option>Melissa A.</option><option>Dylan</option><option>Jorge</option></select>
       </div>
       <div class="form-group full"><label>Copy / Texto del post</label><textarea id="post-copy" placeholder="Escribe el texto del post aquí..." style="min-height:120px"></textarea></div>
     </div>
@@ -499,7 +501,7 @@ textarea{resize:vertical;min-height:80px}
     <div class="form-grid">
       <div class="form-group full"><label>Tarea *</label><input id="task-text" placeholder="Descripción de la tarea"></div>
       <div class="form-group"><label>Asignado a</label>
-        <select id="task-assignee"><option>Mario</option><option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa</option><option>Dylan</option></select>
+        <select id="task-assignee"><option>Mario</option><option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa G.</option><option>Melissa A.</option><option>Dylan</option><option>Jorge</option></select>
       </div>
       <div class="form-group"><label>Prioridad</label>
         <select id="task-priority"><option>Normal</option><option>Alta</option><option>Urgente</option><option>Baja</option></select>
@@ -1245,7 +1247,7 @@ var WEEKLY_GUIDE = {
       ]
     }
   },
-  'Melissa': {
+  'MelissaG': {
     role: 'Community Manager',
     color: '#ab47bc',
     days: {
@@ -1314,6 +1316,78 @@ var WEEKLY_GUIDE = {
         'Actualizar estatus de sus tareas en el OPS HUB',
         'Escribir un breve resumen de lo aprendido en la semana',
         'Preguntar a Axel si hay algo que reforzar la semana siguiente'
+      ]
+    }
+  },
+  'MelissaA': {
+    role: 'Diseño Visual',
+    color: '#f06292',
+    days: {
+      'Lunes': [
+        '🎨 Revisar la parrilla de contenido de Melissa G. e identificar las piezas a producir en la semana',
+        '📐 Diseñar al menos 1 pieza gráfica para Instagram o LinkedIn (post o story)',
+        '🎬 Planificar el video del día: concepto, guion breve y recursos necesarios',
+        '📁 Subir piezas terminadas al Banco de Assets del OPS HUB'
+      ],
+      'Martes': [
+        '🎬 Producir y editar el video del día (formato corto: Reels, TikTok o story)',
+        '🖼️ Diseñar segunda pieza gráfica de la semana',
+        '🔍 Revisar que todas las piezas respetan la Guía de Marca de Heuristica',
+        '📤 Entregar piezas a Melissa G. para programar publicación'
+      ],
+      'Miércoles': [
+        '🎬 Video del día: producción y edición',
+        '✏️ Ajustes y correcciones a piezas de la semana según feedback',
+        '🎨 Explorar referencias visuales del sector electromovilidad / sostenibilidad',
+        '📋 Coordinar con Dylan el copy de las piezas que están en producción'
+      ],
+      'Jueves': [
+        '🎬 Video del día: producción, edición y entrega',
+        '🖼️ Diseño de pieza especial (infografía, carrusel educativo o banner)',
+        '📁 Actualizar el Banco de Assets con todas las versiones finales de la semana',
+        '💡 Proponer 1-2 ideas de contenido visual para la semana siguiente'
+      ],
+      'Viernes': [
+        '🎬 Video de cierre de semana si aplica',
+        '📊 Revisar qué piezas no se completaron y documentar el motivo',
+        '🗂️ Organizar y archivar archivos de diseño (PNG, MP4, fuentes)',
+        '📝 Actualizar tareas en el OPS HUB con lo entregado y lo pendiente'
+      ]
+    }
+  },
+  'Jorge': {
+    role: 'Becario · Sistemas',
+    color: '#80cbc4',
+    days: {
+      'Lunes': [
+        '👋 Revisar las tareas asignadas en el OPS HUB — sin prisa, prioriza lo más claro primero',
+        '🔧 Apoyo técnico al equipo: links rotos, problemas con herramientas, subir archivos',
+        '📖 Dedicar 20-30 min a explorar el OPS HUB y familiarizarte con sus módulos',
+        '❓ Si tienes dudas sobre alguna tarea, anótalas y pregúntale a Axel — no hay preguntas tontas'
+      ],
+      'Martes': [
+        '💻 Apoyo en tareas técnicas del hub: revisar que los links del Banco de Assets funcionen',
+        '📊 Apoyar a Alejandro con búsqueda de datos o estadísticas del sector EV si se requiere',
+        '🗂️ Organizar carpetas compartidas de Google Drive si hay desorden',
+        '📝 Documentar cualquier proceso técnico que hagas para que el equipo pueda repetirlo'
+      ],
+      'Miércoles': [
+        '🔗 Verificar que todos los assets del Banco tengan links activos y accesibles',
+        '⚙️ Apoyo en cualquier tarea operativa o técnica que el equipo necesite',
+        '📚 Explorar 1 herramienta nueva que podría ser útil para el equipo (Canva, Notion, etc.)',
+        '✅ Actualizar el estatus de tus tareas en el OPS HUB'
+      ],
+      'Jueves': [
+        '🛠️ Apoyo técnico a Melissa A. o Arturo: exportar archivos, organizar entregas',
+        '📋 Revisar la Guía de Marca de Heuristica — entender colores, tipografías y tono',
+        '💡 Proponer al menos 1 idea de mejora técnica para el equipo o el hub (¡tu opinión vale!)',
+        '📝 Anotar aprendizajes de la semana — ¿qué aprendiste que no sabías el lunes?'
+      ],
+      'Viernes': [
+        '✅ Completar y cerrar todas las tareas asignadas antes del fin de semana',
+        '📊 Actualizar estatus en el OPS HUB con lo completado',
+        '📝 Escribir un resumen breve de lo que hiciste esta semana (3-4 puntos)',
+        '🙋 Preguntarle a Axel si hay algo en lo que puedas apoyar la semana siguiente'
       ]
     }
   }
