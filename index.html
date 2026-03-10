@@ -290,6 +290,7 @@ textarea{resize:vertical;min-height:80px}
     </div>
     <div class="topbar-right">
       <div class="user-chip" id="user-chip">—</div>
+      <button class="btn-icon" onclick="changeUser()" title="Cambiar usuario" style="font-size:15px">👤</button>
       <button class="btn-icon" onclick="refreshAll()" title="Actualizar datos">↻</button>
       <button class="btn-icon" onclick="reconfig()">⚙</button>
     </div>
@@ -299,6 +300,7 @@ textarea{resize:vertical;min-height:80px}
     <div class="nav-item" onclick="showTab('assets',this)">Banco de Assets</div>
     <div class="nav-item" onclick="showTab('calendar',this)">Calendario</div>
     <div class="nav-item" onclick="showTab('tasks',this)">Tareas</div>
+    <div class="nav-item" onclick="showTab('guide',this)">📋 Guía Semanal</div>
     <div class="nav-item" onclick="showTab('agent',this)">Agente IA</div>
   </div>
   <div class="content">
@@ -387,6 +389,25 @@ textarea{resize:vertical;min-height:80px}
           </div>
         </div>
         <div id="tasks-list"></div>
+      </div>
+    </div>
+
+    <!-- GUIDE TAB -->
+    <div id="tab-guide" class="tab-content" style="display:none">
+      <div class="panel">
+        <div class="panel-title">
+          📋 GUÍA SEMANAL DE TRABAJO
+          <div class="actions">
+            <select class="setup-input filter-select" id="guide-role-filter" onchange="renderGuide()">
+              <option value="">Todos los roles</option>
+              <option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa</option><option>Dylan</option>
+            </select>
+          </div>
+        </div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:20px;padding:12px;background:rgba(54,207,3,0.05);border:1px solid var(--border);border-radius:8px">
+          💡 Esta guía muestra las actividades recurrentes de cada rol por día de la semana. Úsala como referencia si no sabes qué hacer o cómo organizar tu semana.
+        </div>
+        <div id="guide-content"></div>
       </div>
     </div>
 
@@ -625,6 +646,10 @@ function enterApp() {
   document.getElementById('user-chip').textContent = CURRENT_USER + ' · ' + CURRENT_USER_TITLE;
   showScreen('app-screen');
   document.getElementById('app-screen').style.display = 'flex';
+  // Pre-seleccionar el rol del usuario en el filtro de la guía
+  var guideFilter = document.getElementById('guide-role-filter');
+  if(guideFilter) guideFilter.value = CURRENT_USER;
+  window._guideDay = null; // reset día al de hoy
   refreshAll();
 }
 
@@ -1158,6 +1183,7 @@ function showTab(name, el) {
   if(name==='assets') renderAssets();
   if(name==='calendar'){ renderCalendar(); renderPostsList(); }
   if(name==='tasks') renderTasks();
+  if(name==='guide') renderGuide();
 }
 
 function openModal(id) { document.getElementById(id).classList.add('open'); }
@@ -1170,7 +1196,259 @@ function toast(msg, type) {
   setTimeout(function(){ t.classList.remove('show'); }, 3000);
 }
 
-function badge(text, cls) { return '<span class="badge ' + (cls||'badge-gris') + '">' + text + '</span>'; }
+function changeUser() {
+  if(confirm('¿Deseas cambiar de usuario? Volverás a la pantalla de selección.')) {
+    CURRENT_USER = null;
+    document.getElementById('user-chip').textContent = '—';
+    showScreen('login-screen');
+    // Deselect all login cards
+    document.querySelectorAll('.role-btn').forEach(function(c){ c.classList.remove('selected'); });
+    document.getElementById('login-btn').disabled = true;
+  }
+}
+
+// ============================
+// WEEKLY GUIDE
+// ============================
+var WEEKLY_GUIDE = {
+  'Axel': {
+    role: 'Director de Marketing',
+    color: '#E8C615',
+    days: {
+      'Lunes': [
+        'Revisar métricas de la semana anterior (alcance, engagement, leads)',
+        'Briefing semanal con el equipo — alinear prioridades y bloqueos',
+        'Actualizar el pipeline de CRM con nuevos prospectos o cambios de etapa',
+        'Aprobar contenido programado para la semana'
+      ],
+      'Martes': [
+        'Revisión y aprobación de piezas gráficas del diseñador',
+        'Prospección activa: identificar 3-5 nuevos contactos B2B (desarrolladores, hoteleros, plazas)',
+        'Seguimiento a prospectos en etapa "Propuesta enviada"',
+        'Actualizar el Banco de Assets con materiales aprobados'
+      ],
+      'Miércoles': [
+        'Reunión de revisión de contenido mid-week (¿se publicó todo lo planeado?)',
+        'Redactar o revisar propuesta comercial si hay prospect calificado',
+        'Revisar métricas de campañas activas',
+        'Definir brief de contenido para la siguiente semana'
+      ],
+      'Jueves': [
+        'Sesión estratégica: analizar qué tipo de contenido genera más interacción',
+        'Actualizar estado de tareas en el OPS HUB',
+        'Revisión de agenda de publicaciones del Calendario',
+        'Llamadas o demos con prospectos en etapa activa'
+      ],
+      'Viernes': [
+        'Reporte semanal: métricas, leads nuevos, avance de tareas',
+        'Retroalimentación al equipo — reconocer logros y ajustar pendientes',
+        'Planificación de la semana siguiente — cargar tareas en el hub',
+        'Archivar materiales de la semana en el Banco de Assets'
+      ]
+    }
+  },
+  'Arturo': {
+    role: 'Diseñador Gráfico',
+    color: '#36CF03',
+    days: {
+      'Lunes': [
+        'Revisar brief de contenido aprobado por Axel',
+        'Planificar piezas de la semana: posts, stories, banners',
+        'Actualizar estatus de assets pendientes en el hub',
+        'Preparar plantillas base para la semana'
+      ],
+      'Martes': [
+        'Producción de posts para Instagram/LinkedIn (mínimo 2 piezas)',
+        'Diseño de materiales de apoyo para propuestas o presentaciones',
+        'Subir piezas terminadas al Banco de Assets del hub',
+        'Revisión de identidad visual: verificar que todo respeta la Guía de Marca'
+      ],
+      'Miércoles': [
+        'Producción de stories y reels (diseño/storyboard)',
+        'Ajustes y correcciones a piezas revisadas por Axel',
+        'Explorar referencias visuales del sector electromovilidad',
+        'Preparar material para aprobación antes del jueves'
+      ],
+      'Jueves': [
+        'Entrega de piezas aprobadas al Community Manager para programar',
+        'Diseño de piezas especiales (infografías, carruseles educativos)',
+        'Actualizar el Banco de Assets con versiones finales',
+        'Coordinar con Alejandro para alinear copy y diseño'
+      ],
+      'Viernes': [
+        'Revisar qué piezas no se completaron y documentar el motivo',
+        'Archivar y organizar archivos de diseño (fuentes, AI, PNG)',
+        'Proponer 1-2 ideas de contenido visual para la semana siguiente',
+        'Actualizar tareas en el hub con lo que quedó pendiente'
+      ]
+    }
+  },
+  'Alejandro': {
+    role: 'Estudiante de Marketing',
+    color: '#4fc3f7',
+    days: {
+      'Lunes': [
+        'Investigación de mercado: noticias recientes sobre electromovilidad en México/LATAM',
+        'Revisar el Calendario de Contenido y entender los posts de la semana',
+        'Redactar copys para los posts programados (Instagram, LinkedIn)',
+        'Buscar 3 hashtags relevantes y tendencias del sector para la semana'
+      ],
+      'Martes': [
+        'Entregar copys a Arturo para integrar en las piezas gráficas',
+        'Análisis de competidores: ¿qué publicaron la semana pasada?',
+        'Redactar textos para propuestas o presentaciones si se requiere',
+        'Investigar casos de éxito de electrolineras para usar como referencia de contenido'
+      ],
+      'Miércoles': [
+        'Apoyo en la programación de publicaciones (Buffer, Meta Business Suite)',
+        'Revisión y corrección de copys según feedback de Axel',
+        'Redactar 1 artículo corto o post de blog sobre electromovilidad',
+        'Actualizar el Calendario de Contenido con lo publicado vs. lo planeado'
+      ],
+      'Jueves': [
+        'Apoyo en seguimiento de leads: buscar info de empresas/contactos en LinkedIn',
+        'Preparar informe semanal de métricas de redes (alcance, clicks, seguidores)',
+        'Proponer 3 ideas de contenido para la semana siguiente',
+        'Actualizar tareas en el OPS HUB'
+      ],
+      'Viernes': [
+        'Entregar reporte de métricas al Director',
+        'Hacer benchmark: comparar métricas de Heuristica vs. competidores',
+        'Documentar aprendizajes de la semana (qué funcionó, qué no)',
+        'Cargar ideas de contenido aprobadas en el Calendario del hub'
+      ]
+    }
+  },
+  'Melissa': {
+    role: 'Community Manager',
+    color: '#ab47bc',
+    days: {
+      'Lunes': [
+        'Revisar y responder todos los mensajes/comentarios del fin de semana',
+        'Programar publicaciones de la semana en todas las plataformas',
+        'Verificar que el Calendario de Contenido esté alineado con lo que se va a publicar',
+        'Monitorear menciones de Heuristica y keywords del sector'
+      ],
+      'Martes': [
+        'Publicar y hacer seguimiento del primer post de la semana',
+        'Interacción activa: comentar en publicaciones del sector (grupos de EV, LinkedIn)',
+        'Reportar cualquier comentario negativo o consulta técnica a Axel',
+        'Actualizar el CRM si algún prospecto contactó por redes sociales'
+      ],
+      'Miércoles': [
+        'Publicación de stories o contenido efímero',
+        'Revisar estadísticas mid-week: ¿cómo van los posts?',
+        'Interacción: responder comentarios, dar likes estratégicos',
+        'Coordinar con Arturo si falta alguna pieza para publicar'
+      ],
+      'Jueves': [
+        'Publicar post del jueves (preferentemente contenido educativo o de valor)',
+        'Monitoreo de comunidad: identificar usuarios frecuentes o potenciales leads',
+        'Actualizar el Calendario con lo publicado y las métricas iniciales',
+        'Proponer ideas de engagement para el fin de semana'
+      ],
+      'Viernes': [
+        'Cierre de semana: reportar alcance total, interacciones y nuevos seguidores',
+        'Programar contenido del fin de semana si aplica',
+        'Identificar el post con mejor desempeño y documentarlo',
+        'Actualizar el hub con cualquier lead nuevo captado desde redes'
+      ]
+    }
+  },
+  'Dylan': {
+    role: 'Practicante',
+    color: '#ff8a65',
+    days: {
+      'Lunes': [
+        'Revisar las tareas asignadas en el OPS HUB para la semana',
+        'Apoyo a Melissa: programar 1-2 posts en plataformas',
+        'Investigación de apoyo: buscar imágenes o recursos para piezas de contenido',
+        'Preguntar al equipo si hay pendientes urgentes de la semana anterior'
+      ],
+      'Martes': [
+        'Apoyo a Alejandro: búsqueda de datos, estadísticas o noticias del sector EV',
+        'Cargar o actualizar entradas en el Banco de Assets',
+        'Monitorear comentarios en redes bajo supervisión de Melissa',
+        'Documentar cualquier observación o aprendizaje del día'
+      ],
+      'Miércoles': [
+        'Apoyo en programación de contenido de la segunda mitad de semana',
+        'Actualizar tareas completadas en el hub',
+        'Revisión de materiales en el Banco de Assets: ¿hay algo desactualizado?',
+        'Apoyar con cualquier tarea operativa que el equipo necesite'
+      ],
+      'Jueves': [
+        'Apoyo a Arturo: descarga de recursos, exportación de archivos, organización de carpetas',
+        'Seguimiento a tareas asignadas: actualizar estatus en el hub',
+        'Revisión de la guía de marca: familiarizarse con colores, tipografías y tono',
+        'Proponer al menos 1 idea de mejora para el equipo o el hub'
+      ],
+      'Viernes': [
+        'Completar todas las tareas asignadas antes del cierre',
+        'Actualizar estatus de sus tareas en el OPS HUB',
+        'Escribir un breve resumen de lo aprendido en la semana',
+        'Preguntar a Axel si hay algo que reforzar la semana siguiente'
+      ]
+    }
+  }
+};
+
+var DAYS_ORDER = ['Lunes','Martes','Miércoles','Jueves','Viernes'];
+
+function renderGuide() {
+  var filter = document.getElementById('guide-role-filter').value;
+  var roles = filter ? [filter] : Object.keys(WEEKLY_GUIDE);
+  var html = '';
+
+  // Day selector tabs
+  var today = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'][new Date().getDay()];
+  var activeDay = DAYS_ORDER.includes(today) ? today : 'Lunes';
+  if(!window._guideDay) window._guideDay = activeDay;
+
+  html += '<div style="display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap">';
+  DAYS_ORDER.forEach(function(d){
+    var isActive = d === window._guideDay;
+    var isToday = d === today;
+    html += '<button onclick="setGuideDay(\'' + d + '\')" style="padding:8px 16px;border-radius:20px;border:1px solid ' + (isActive?'var(--verde)':'var(--border)') + ';background:' + (isActive?'var(--verde)':'transparent') + ';color:' + (isActive?'#000':'var(--text2)') + ';font-size:12px;cursor:pointer;font-weight:' + (isActive?'700':'400') + ';font-family:inherit">' + d + (isToday?' ★':'') + '</button>';
+  });
+  html += '</div>';
+
+  roles.forEach(function(roleName){
+    var data = WEEKLY_GUIDE[roleName];
+    if(!data) return;
+    var dayTasks = data.days[window._guideDay] || [];
+
+    html += '<div style="margin-bottom:24px;border:1px solid var(--border);border-radius:12px;overflow:hidden">';
+    html += '<div style="padding:14px 20px;background:rgba(13,26,53,0.6);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px">';
+    html += '<span style="width:10px;height:10px;border-radius:50%;background:' + data.color + ';display:inline-block"></span>';
+    html += '<span style="font-weight:600;font-size:14px;color:var(--text)">' + roleName + '</span>';
+    html += '<span style="font-size:11px;color:var(--text2);margin-left:4px">· ' + data.role + '</span>';
+    html += '</div>';
+    html += '<div style="padding:16px 20px">';
+
+    if(dayTasks.length === 0) {
+      html += '<div style="color:var(--text2);font-size:13px">Sin actividades definidas para este día.</div>';
+    } else {
+      dayTasks.forEach(function(task, i){
+        html += '<div style="display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.04)">';
+        html += '<div style="width:22px;height:22px;border-radius:50%;background:rgba(54,207,3,0.1);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px;font-weight:700;color:var(--verde)">' + (i+1) + '</div>';
+        html += '<div style="font-size:13px;color:var(--text);line-height:1.5">' + task + '</div>';
+        html += '</div>';
+      });
+    }
+
+    html += '</div></div>';
+  });
+
+  document.getElementById('guide-content').innerHTML = html;
+}
+
+function setGuideDay(day) {
+  window._guideDay = day;
+  renderGuide();
+}
+
+
 
 function statCard(val, label) {
   return '<div class="stat-card"><div class="stat-val">' + val + '</div><div class="stat-label">' + label + '</div></div>';
