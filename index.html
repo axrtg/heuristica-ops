@@ -831,7 +831,7 @@ function renderAssets() {
   var data = DB.assets.filter(function(r){
     return (!search || (r.name||'').toLowerCase().indexOf(search)>=0)
       && (!type || r.type===type) && (!canal || r.canal===canal);
-  });
+  }).slice().reverse()
   var grid = document.getElementById('assets-grid');
   if (data.length === 0) { grid.innerHTML = emptyState('📦','Sin assets','Agrega tu primer asset con el botón de arriba.'); return; }
   grid.innerHTML = data.map(function(r) {
