@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HEURISTICA · OPS HUB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --azul: #031244;
+  --verde: #36CF03;
+  --amarillo: #E8C615;
+  --negro: #000000;
+  --blanco: #ffffff;
+  --gris: #9d9d9c;
+  --bg: #080f20;
+  --bg2: #0d1a35;
+  --bg3: #112040;
+  --border: rgba(54,207,3,0.15);
+  --border2: rgba(54,207,3,0.3);
+  --text: #e8edf5;
+  --text2: #8a9bb5;
+  --card: rgba(13,26,53,0.8);
+  --radius: 12px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.4);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 20% 20%, rgba(3,18,68,0.8) 0%, transparent 60%),radial-gradient(ellipse at 80% 80%, rgba(54,207,3,0.05) 0%, transparent 60%);pointer-events:none;z-index:0}
+
+/* ---- SCREENS ---- */
+.screen{display:none;min-height:100vh;position:relative;z-index:1}
+.screen.active{display:flex}
+
+/* ---- SETUP SCREEN ---- */
+#setup-screen{flex-direction:column;align-items:center;justify-content:center;padding:40px 20px}
+.setup-box{background:var(--card);border:1px solid var(--border2);border-radius:20px;padding:48px 40px;max-width:540px;width:100%;backdrop-filter:blur(20px);box-shadow:var(--shadow)}
+.logo-big{font-family:'Space Mono',monospace;font-size:28px;font-weight:700;color:var(--blanco);letter-spacing:2px;margin-bottom:4px}
+.logo-big span{color:var(--verde)}
+.logo-sub{font-size:11px;color:var(--gris);letter-spacing:4px;text-transform:uppercase;margin-bottom:32px}
+.setup-title{font-size:18px;font-weight:600;color:var(--text);margin-bottom:8px}
+.setup-desc{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:24px}
+.setup-steps{background:rgba(3,18,68,0.5);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:24px}
+.step{display:flex;gap:12px;margin-bottom:12px;font-size:12px;color:var(--text2);line-height:1.5}
+.step:last-child{margin-bottom:0}
+.step-num{width:20px;height:20px;border-radius:50%;background:var(--verde);color:#000;font-weight:700;font-size:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.setup-input{width:100%;background:rgba(0,0,0,0.3);border:1px solid var(--border2);border-radius:10px;padding:14px 16px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;transition:.2s;margin-bottom:12px}
+.setup-input:focus{border-color:var(--verde);box-shadow:0 0 0 3px rgba(54,207,3,0.1)}
+.setup-input::placeholder{color:var(--text2)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 24px;border-radius:10px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;transition:.2s;text-decoration:none}
+.btn-primary{background:var(--verde);color:#000;width:100%}
+.btn-primary:hover{background:#2db803;transform:translateY(-1px)}
+.btn-secondary{background:transparent;color:var(--text2);border:1px solid var(--border);font-size:12px;padding:8px 16px;width:100%;margin-top:8px}
+.btn-secondary:hover{border-color:var(--gris);color:var(--text)}
+.btn-danger{background:rgba(220,53,69,0.15);color:#ff6b7a;border:1px solid rgba(220,53,69,0.3)}
+.btn-danger:hover{background:rgba(220,53,69,0.25)}
+.btn-sm{padding:6px 14px;font-size:12px;border-radius:8px}
+.status-msg{font-size:12px;padding:10px 14px;border-radius:8px;margin-bottom:12px;display:none}
+.status-ok{background:rgba(54,207,3,0.1);border:1px solid rgba(54,207,3,0.3);color:var(--verde)}
+.status-err{background:rgba(220,53,69,0.1);border:1px solid rgba(220,53,69,0.3);color:#ff6b7a}
+.status-info{background:rgba(232,198,21,0.1);border:1px solid rgba(232,198,21,0.3);color:var(--amarillo)}
+
+/* ---- LOGIN SCREEN ---- */
+#login-screen{flex-direction:column;align-items:center;justify-content:center;padding:40px 20px}
+.login-box{background:var(--card);border:1px solid var(--border2);border-radius:20px;padding:48px 40px;max-width:480px;width:100%;backdrop-filter:blur(20px)}
+.login-title{font-family:'Space Mono',monospace;font-size:14px;color:var(--verde);letter-spacing:2px;margin-bottom:24px}
+.roles-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.role-btn{background:rgba(3,18,68,0.6);border:1px solid var(--border);border-radius:12px;padding:20px 16px;cursor:pointer;transition:.2s;text-align:left}
+.role-btn:hover{border-color:var(--verde);background:rgba(54,207,3,0.05)}
+.role-btn.selected{border-color:var(--verde);background:rgba(54,207,3,0.1)}
+.role-name{font-weight:600;font-size:14px;color:var(--text);margin-bottom:2px}
+.role-title{font-size:11px;color:var(--text2)}
+
+/* ---- MAIN APP ---- */
+#app-screen{flex-direction:column}
+.topbar{background:rgba(8,15,32,0.95);border-bottom:1px solid var(--border);padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;backdrop-filter:blur(20px)}
+.topbar-left{display:flex;align-items:center;gap:16px}
+.logo-sm{font-family:'Space Mono',monospace;font-size:16px;font-weight:700;color:var(--blanco);letter-spacing:1px}
+.logo-sm span{color:var(--verde)}
+.topbar-right{display:flex;align-items:center;gap:12px}
+.user-chip{background:rgba(54,207,3,0.1);border:1px solid var(--border2);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:500;color:var(--verde)}
+.btn-icon{background:transparent;border:1px solid var(--border);border-radius:8px;padding:7px 12px;cursor:pointer;color:var(--text2);font-size:12px;transition:.2s}
+.btn-icon:hover{border-color:var(--gris);color:var(--text)}
+
+/* NAV */
+.nav{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 24px;display:flex;gap:4px;overflow-x:auto}
+.nav-item{padding:14px 18px;font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:.2s}
+.nav-item:hover{color:var(--text)}
+.nav-item.active{color:var(--verde);border-bottom-color:var(--verde)}
+
+/* MAIN CONTENT */
+.content{flex:1;padding:28px 28px;overflow-y:auto;max-width:1400px;width:100%;margin:0 auto}
+
+/* CARDS & PANELS */
+.panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:20px;backdrop-filter:blur(10px)}
+.panel-title{font-family:'Space Mono',monospace;font-size:12px;color:var(--verde);letter-spacing:2px;text-transform:uppercase;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between}
+.panel-title .actions{display:flex;gap:8px}
+
+/* STATS ROW */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:24px}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;backdrop-filter:blur(10px)}
+.stat-val{font-family:'Space Mono',monospace;font-size:32px;font-weight:700;color:var(--verde);line-height:1}
+.stat-label{font-size:12px;color:var(--text2);margin-top:6px}
+
+/* TABLE */
+.table-wrap{overflow-x:auto;border-radius:10px;border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead{background:rgba(3,18,68,0.8)}
+th{padding:12px 16px;text-align:left;font-size:11px;font-weight:600;color:var(--text2);letter-spacing:1px;text-transform:uppercase;border-bottom:1px solid var(--border)}
+td{padding:12px 16px;border-bottom:1px solid rgba(54,207,3,0.06);color:var(--text);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(54,207,3,0.03)}
+
+/* BADGES */
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.badge-verde{background:rgba(54,207,3,0.15);color:var(--verde)}
+.badge-amarillo{background:rgba(232,198,21,0.15);color:var(--amarillo)}
+.badge-azul{background:rgba(3,18,68,0.8);color:#7a9fd4;border:1px solid rgba(122,159,212,0.2)}
+.badge-rojo{background:rgba(220,53,69,0.15);color:#ff6b7a}
+.badge-gris{background:rgba(157,157,157,0.15);color:var(--gris)}
+.badge-fire{background:rgba(255,100,0,0.15);color:#ff7b3a}
+
+/* FORMS */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-grid.cols3{grid-template-columns:1fr 1fr 1fr}
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-group.full{grid-column:1/-1}
+label{font-size:11px;font-weight:600;color:var(--text2);letter-spacing:.5px;text-transform:uppercase}
+input,select,textarea{background:rgba(0,0,0,0.3);border:1px solid var(--border2);border-radius:8px;padding:10px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;transition:.2s;width:100%}
+input:focus,select:focus,textarea:focus{border-color:var(--verde);box-shadow:0 0 0 3px rgba(54,207,3,0.08)}
+input::placeholder,textarea::placeholder{color:var(--text2)}
+select option{background:#0d1a35}
+textarea{resize:vertical;min-height:80px}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1000;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+.modal-overlay.open{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:16px;padding:32px;max-width:620px;width:100%;max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.6)}
+.modal-title{font-family:'Space Mono',monospace;font-size:14px;color:var(--verde);letter-spacing:2px;margin-bottom:24px;display:flex;justify-content:space-between;align-items:center}
+.modal-close{background:transparent;border:none;color:var(--text2);cursor:pointer;font-size:20px;transition:.2s}
+.modal-close:hover{color:var(--text)}
+.modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:24px;padding-top:20px;border-top:1px solid var(--border)}
+
+/* PIPELINE */
+.pipeline{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:20px}
+.pipe-col{background:rgba(3,18,68,0.4);border:1px solid var(--border);border-radius:12px;padding:14px}
+.pipe-label{font-size:11px;font-weight:700;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;display:flex;justify-content:space-between}
+.pipe-count{background:var(--border2);border-radius:10px;padding:1px 8px;color:var(--verde);font-family:'Space Mono',monospace}
+.pipe-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:8px;cursor:pointer;transition:.2s;font-size:12px}
+.pipe-card:hover{border-color:var(--verde);transform:translateY(-1px)}
+.pipe-card:last-child{margin-bottom:0}
+.pipe-company{font-weight:600;color:var(--text);margin-bottom:3px}
+.pipe-owner{color:var(--text2)}
+
+/* CALENDAR */
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:16px}
+.cal-header{text-align:center;font-size:10px;font-weight:700;color:var(--text2);letter-spacing:1px;padding:6px 0;text-transform:uppercase}
+.cal-day{background:rgba(3,18,68,0.3);border:1px solid var(--border);border-radius:8px;min-height:80px;padding:8px;cursor:pointer;transition:.2s}
+.cal-day:hover{border-color:var(--verde)}
+.cal-day.today{border-color:var(--verde);background:rgba(54,207,3,0.05)}
+.cal-day.empty{background:transparent;border-color:transparent;cursor:default}
+.cal-day-num{font-size:11px;font-weight:700;color:var(--text2);margin-bottom:4px}
+.cal-day.today .cal-day-num{color:var(--verde)}
+.cal-post{background:rgba(54,207,3,0.15);border-radius:4px;padding:2px 5px;font-size:9px;color:var(--verde);margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cal-post.draft{background:rgba(232,198,21,0.15);color:var(--amarillo)}
+.cal-post.scheduled{background:rgba(3,18,68,0.8);color:#7a9fd4;border:1px solid rgba(122,159,212,0.2)}
+
+/* TASKS */
+.task-item{display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;transition:.2s}
+.task-item:hover{border-color:var(--border2)}
+.task-check{width:20px;height:20px;border-radius:50%;border:2px solid var(--border2);cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:.2s}
+.task-check.done{background:var(--verde);border-color:var(--verde)}
+.task-check.done::after{content:'✓';font-size:11px;font-weight:700;color:#000}
+.task-text{flex:1;font-size:13px}
+.task-text.done{text-decoration:line-through;color:var(--text2)}
+.task-meta{font-size:11px;color:var(--text2)}
+
+/* ASSETS */
+.assets-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.asset-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;cursor:pointer;transition:.2s}
+.asset-card:hover{border-color:var(--verde);transform:translateY(-2px)}
+.asset-icon{width:40px;height:40px;border-radius:10px;background:rgba(54,207,3,0.1);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:12px}
+.asset-name{font-weight:600;font-size:13px;margin-bottom:4px;color:var(--text)}
+.asset-meta{font-size:11px;color:var(--text2)}
+
+/* AI AGENT */
+.agent-wrap{display:flex;flex-direction:column;height:calc(100vh - 200px);min-height:400px}
+.agent-messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;background:rgba(0,0,0,0.2);border:1px solid var(--border);border-radius:12px 12px 0 0}
+.msg{max-width:75%;padding:12px 16px;border-radius:12px;font-size:13px;line-height:1.6}
+.msg-user{background:rgba(54,207,3,0.1);border:1px solid rgba(54,207,3,0.2);color:var(--text);align-self:flex-end;border-radius:12px 12px 0 12px}
+.msg-agent{background:var(--bg3);border:1px solid var(--border);color:var(--text);align-self:flex-start;border-radius:12px 12px 12px 0}
+.msg-agent strong{color:var(--verde)}
+.agent-input-row{display:flex;gap:0;background:var(--bg2);border:1px solid var(--border2);border-top:none;border-radius:0 0 12px 12px;overflow:hidden}
+.agent-input{flex:1;background:transparent;border:none;padding:14px 16px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none}
+.agent-input::placeholder{color:var(--text2)}
+.agent-send{background:var(--verde);border:none;padding:14px 20px;cursor:pointer;color:#000;font-weight:700;font-size:14px;transition:.2s}
+.agent-send:hover{background:#2db803}
+.typing{display:flex;gap:4px;align-items:center;padding:14px 16px}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--verde);animation:bounce .8s infinite}
+.dot:nth-child(2){animation-delay:.15s}
+.dot:nth-child(3){animation-delay:.3s}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+
+/* FILTERS */
+.filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;align-items:center}
+.filter-input{max-width:220px;margin-bottom:0 !important}
+.filter-select{max-width:160px}
+
+/* EMPTY STATE */
+.empty{text-align:center;padding:48px 20px;color:var(--text2)}
+.empty-icon{font-size:48px;margin-bottom:16px;opacity:.4}
+.empty-title{font-size:15px;font-weight:600;color:var(--text);margin-bottom:8px}
+.empty-desc{font-size:13px}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--bg3);border:1px solid var(--verde);border-radius:12px;padding:14px 20px;font-size:13px;color:var(--verde);z-index:9999;transform:translateY(80px);opacity:0;transition:.3s;max-width:320px}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.error{border-color:#ff6b7a;color:#ff6b7a}
+
+/* LOADING */
+.loading{display:inline-flex;align-items:center;gap:8px;color:var(--text2);font-size:13px}
+.spin{width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--verde);border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .form-grid{grid-template-columns:1fr}
+  .form-grid.cols3{grid-template-columns:1fr 1fr}
+  .content{padding:16px}
+  .pipeline{grid-template-columns:1fr 1fr}
+  .stats-row{grid-template-columns:repeat(2,1fr)}
+  .roles-grid{grid-template-columns:1fr}
+}
+@media(max-width:480px){
+  .pipeline{grid-template-columns:1fr}
+  .stats-row{grid-template-columns:1fr 1fr}
+  .cal-grid{grid-template-columns:repeat(7,1fr)}
+}
+</style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div id="toast" class="toast"></div>
+
+<!-- SETUP SCREEN -->
+<div id="setup-screen" class="screen active">
+  <div class="setup-box">
+    <div class="logo-big">H<span>E</span>URISTICA</div>
+    <div class="logo-sub">ENERGY · TRANSPORT · ANALYTICS</div>
+    <div class="setup-title">Configuración inicial del OPS HUB</div>
+    <div class="setup-desc">Esta pantalla sólo aparece una vez. Sigue los pasos para conectar el hub con tu Google Sheet compartido.</div>
+    <div class="setup-steps">
+      <div class="step"><div class="step-num">1</div><div>Abre <strong>script.google.com</strong> y pega el código del archivo <code>HeuristicaOps.gs</code></div></div>
+      <div class="step"><div class="step-num">2</div><div>Crea un nuevo deploy: <strong>Implementar → Nueva implementación → Aplicación web</strong></div></div>
+      <div class="step"><div class="step-num">3</div><div>Ajusta: <strong>Ejecutar como: Yo</strong> · <strong>Quién tiene acceso: Cualquiera</strong></div></div>
+      <div class="step"><div class="step-num">4</div><div>Copia la URL del deploy y pégala aquí abajo</div></div>
+    </div>
+    <div id="setup-status" class="status-msg"></div>
+    <input id="script-url-input" class="setup-input" type="url" placeholder="https://script.google.com/macros/s/.../exec">
+    <button class="btn btn-primary" onclick="saveAndConnect()">Conectar y continuar →</button>
+    <button class="btn btn-secondary" onclick="enterOffline()">Continuar sin backend (modo local)</button>
+  </div>
+</div>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen" class="screen">
+  <div class="login-box">
+    <div class="logo-big" style="margin-bottom:4px">H<span>E</span>URISTICA</div>
+    <div class="logo-sub">OPS HUB</div>
+    <div class="login-title">¿QUIÉN ERES?</div>
+    <div class="roles-grid" id="roles-grid">
+      <div class="role-btn" onclick="selectRole(this,'Axel','Director de Marketing')"><div class="role-name">Axel</div><div class="role-title">Director de Marketing</div></div>
+      <div class="role-btn" onclick="selectRole(this,'Arturo','Diseñador Gráfico')"><div class="role-name">Arturo</div><div class="role-title">Diseñador Gráfico</div></div>
+      <div class="role-btn" onclick="selectRole(this,'Alejandro','Estudiante de Marketing')"><div class="role-name">Alejandro</div><div class="role-title">Estudiante de Marketing</div></div>
+      <div class="role-btn" onclick="selectRole(this,'Melissa','Community Manager')"><div class="role-name">Melissa</div><div class="role-title">Community Manager</div></div>
+      <div class="role-btn" onclick="selectRole(this,'Dylan','Practicante')"><div class="role-name">Dylan</div><div class="role-title">Practicante</div></div>
+    </div>
+    <button class="btn btn-primary" onclick="enterApp()" id="login-btn" disabled>Entrar al Hub</button>
+    <button class="btn btn-secondary" style="margin-top:8px" onclick="reconfig()">⚙️ Reconfigurar backend</button>
+  </div>
+</div>
+
+<!-- APP SCREEN -->
+<div id="app-screen" class="screen" style="flex-direction:column">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="logo-sm">H<span>E</span>URISTICA · <span style="color:var(--text2);font-size:12px;letter-spacing:1px">OPS HUB</span></div>
+    </div>
+    <div class="topbar-right">
+      <div class="user-chip" id="user-chip">—</div>
+      <button class="btn-icon" onclick="refreshAll()" title="Actualizar datos">↻</button>
+      <button class="btn-icon" onclick="reconfig()">⚙</button>
+    </div>
+  </div>
+  <div class="nav">
+    <div class="nav-item active" onclick="showTab('crm',this)">CRM</div>
+    <div class="nav-item" onclick="showTab('assets',this)">Banco de Assets</div>
+    <div class="nav-item" onclick="showTab('calendar',this)">Calendario</div>
+    <div class="nav-item" onclick="showTab('tasks',this)">Tareas</div>
+    <div class="nav-item" onclick="showTab('agent',this)">Agente IA</div>
+  </div>
+  <div class="content">
+
+    <!-- CRM TAB -->
+    <div id="tab-crm" class="tab-content">
+      <div class="stats-row" id="crm-stats"></div>
+      <div class="panel">
+        <div class="panel-title">
+          PIPELINE DE PROSPECTOS
+          <div class="actions">
+            <button class="btn btn-primary btn-sm" onclick="openModal('crm-modal')">+ Nuevo prospecto</button>
+          </div>
+        </div>
+        <div class="filters">
+          <input class="setup-input filter-input" id="crm-search" type="text" placeholder="🔍 Buscar empresa..." oninput="renderCRM()">
+          <select class="setup-input filter-select" id="crm-filter-stage" onchange="renderCRM()">
+            <option value="">Todas las etapas</option>
+            <option>Prospecto</option><option>Contactado</option><option>Interesado</option><option>Propuesta</option><option>Negociación</option><option>Cerrado ✓</option><option>Descartado</option>
+          </select>
+          <select class="setup-input filter-select" id="crm-filter-owner" onchange="renderCRM()">
+            <option value="">Todos</option>
+            <option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa</option><option>Dylan</option>
+          </select>
+        </div>
+        <div id="crm-pipeline"></div>
+        <div id="crm-table-wrap" style="margin-top:20px"></div>
+      </div>
+    </div>
+
+    <!-- ASSETS TAB -->
+    <div id="tab-assets" class="tab-content" style="display:none">
+      <div class="panel">
+        <div class="panel-title">
+          BANCO DE ASSETS
+          <div class="actions">
+            <button class="btn btn-primary btn-sm" onclick="openModal('asset-modal')">+ Nuevo asset</button>
+          </div>
+        </div>
+        <div class="filters">
+          <input class="setup-input filter-input" id="asset-search" type="text" placeholder="🔍 Buscar asset..." oninput="renderAssets()">
+          <select class="setup-input filter-select" id="asset-filter-type" onchange="renderAssets()">
+            <option value="">Todos los tipos</option>
+            <option>Imagen</option><option>Video</option><option>Documento</option><option>Plantilla</option><option>Enlace</option><option>Audio</option><option>Otro</option>
+          </select>
+          <select class="setup-input filter-select" id="asset-filter-canal" onchange="renderAssets()">
+            <option value="">Todos los canales</option>
+            <option>Instagram</option><option>LinkedIn</option><option>Facebook</option><option>TikTok</option><option>WhatsApp</option><option>Web</option><option>General</option>
+          </select>
+        </div>
+        <div id="assets-grid" class="assets-grid"></div>
+      </div>
+    </div>
+
+    <!-- CALENDAR TAB -->
+    <div id="tab-calendar" class="tab-content" style="display:none">
+      <div class="panel">
+        <div class="panel-title">
+          CALENDARIO DE CONTENIDO
+          <div class="actions">
+            <button class="btn btn-secondary btn-sm" onclick="prevMonth()">←</button>
+            <span id="cal-month-label" style="font-size:13px;color:var(--text)"></span>
+            <button class="btn btn-secondary btn-sm" onclick="nextMonth()">→</button>
+            <button class="btn btn-primary btn-sm" onclick="openModal('post-modal')">+ Nuevo post</button>
+          </div>
+        </div>
+        <div id="calendar-wrap"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">POSTS DEL MES</div>
+        <div id="posts-list"></div>
+      </div>
+    </div>
+
+    <!-- TASKS TAB -->
+    <div id="tab-tasks" class="tab-content" style="display:none">
+      <div class="panel">
+        <div class="panel-title">
+          TAREAS DEL EQUIPO
+          <div class="actions">
+            <select class="setup-input filter-select" id="task-filter-assignee" onchange="renderTasks()">
+              <option value="">Todos</option>
+              <option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa</option><option>Dylan</option>
+            </select>
+            <button class="btn btn-primary btn-sm" onclick="openModal('task-modal')">+ Nueva tarea</button>
+          </div>
+        </div>
+        <div id="tasks-list"></div>
+      </div>
+    </div>
+
+    <!-- AGENT TAB -->
+    <div id="tab-agent" class="tab-content" style="display:none">
+      <div class="panel">
+        <div class="panel-title">AGENTE IA · HEURISTICA</div>
+        <div class="agent-wrap">
+          <div id="agent-messages" class="agent-messages">
+            <div class="msg msg-agent">Hola, soy el Agente IA de Heuristica. Tengo acceso a todos los datos del OPS HUB: CRM, assets, calendario y tareas. ¿En qué puedo ayudarte hoy?</div>
+          </div>
+          <div class="agent-input-row">
+            <input id="agent-input" class="agent-input" type="text" placeholder="Escribe tu pregunta..." onkeydown="if(event.key==='Enter')sendAgent()">
+            <button class="agent-send" onclick="sendAgent()">→</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODALS -->
+
+<!-- CRM Modal -->
+<div id="crm-modal" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-title">NUEVO PROSPECTO <button class="modal-close" onclick="closeModal('crm-modal')">×</button></div>
+    <div class="form-grid">
+      <div class="form-group"><label>Empresa *</label><input id="crm-company" placeholder="Nombre de la empresa"></div>
+      <div class="form-group"><label>Segmento</label>
+        <select id="crm-segment"><option value="">Seleccionar...</option><option>Plaza Comercial</option><option>Hotel</option><option>Corporativo</option><option>Hospital</option><option>Universidad</option><option>Gobierno</option><option>Aeropuerto</option><option>Residencial</option><option>Otro</option></select>
+      </div>
+      <div class="form-group"><label>Nombre de contacto</label><input id="crm-contact" placeholder="Nombre completo"></div>
+      <div class="form-group"><label>Puesto</label><input id="crm-title" placeholder="Director, Gerente..."></div>
+      <div class="form-group"><label>Email</label><input id="crm-email" type="email" placeholder="correo@empresa.com"></div>
+      <div class="form-group"><label>Teléfono</label><input id="crm-phone" placeholder="+52 33..."></div>
+      <div class="form-group"><label>Canal de contacto</label>
+        <select id="crm-canal"><option value="">Seleccionar...</option><option>Email</option><option>LinkedIn</option><option>WhatsApp</option><option>Llamada</option><option>Referido</option><option>Evento</option><option>Web</option></select>
+      </div>
+      <div class="form-group"><label>Etapa</label>
+        <select id="crm-stage"><option>Prospecto</option><option>Contactado</option><option>Interesado</option><option>Propuesta</option><option>Negociación</option><option>Cerrado ✓</option><option>Descartado</option></select>
+      </div>
+      <div class="form-group"><label>Responsable</label>
+        <select id="crm-owner"><option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa</option><option>Dylan</option></select>
+      </div>
+      <div class="form-group"><label>🔥 Oportunidad de venta</label>
+        <select id="crm-salesflag"><option value="0">No</option><option value="1">Sí — marcar como hot lead</option></select>
+      </div>
+      <div class="form-group full"><label>Notas</label><textarea id="crm-notes" placeholder="Comentarios, contexto, próximos pasos..."></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('crm-modal')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveCRM()">Guardar prospecto</button>
+    </div>
+  </div>
+</div>
+
+<!-- Asset Modal -->
+<div id="asset-modal" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-title">NUEVO ASSET <button class="modal-close" onclick="closeModal('asset-modal')">×</button></div>
+    <div class="form-grid">
+      <div class="form-group full"><label>Nombre del asset *</label><input id="asset-name" placeholder="Nombre descriptivo"></div>
+      <div class="form-group"><label>Tipo</label>
+        <select id="asset-type"><option value="">Seleccionar...</option><option>Imagen</option><option>Video</option><option>Documento</option><option>Plantilla</option><option>Enlace</option><option>Audio</option><option>Otro</option></select>
+      </div>
+      <div class="form-group"><label>Categoría</label><input id="asset-cat" placeholder="Logos, Campañas, Reportes..."></div>
+      <div class="form-group full"><label>Link / URL</label><input id="asset-link" type="url" placeholder="https://drive.google.com/..."></div>
+      <div class="form-group"><label>Canal</label>
+        <select id="asset-canal"><option value="">General</option><option>Instagram</option><option>LinkedIn</option><option>Facebook</option><option>TikTok</option><option>WhatsApp</option><option>Web</option></select>
+      </div>
+      <div class="form-group"><label>Estado</label>
+        <select id="asset-status"><option>Activo</option><option>En revisión</option><option>Archivado</option></select>
+      </div>
+      <div class="form-group full"><label>Notas</label><textarea id="asset-notes" placeholder="Descripción, uso, contexto..."></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('asset-modal')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveAsset()">Guardar asset</button>
+    </div>
+  </div>
+</div>
+
+<!-- Post Modal -->
+<div id="post-modal" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-title">NUEVO POST <button class="modal-close" onclick="closeModal('post-modal')">×</button></div>
+    <div class="form-grid">
+      <div class="form-group full"><label>Título del post *</label><input id="post-title" placeholder="Título descriptivo"></div>
+      <div class="form-group"><label>Canal</label>
+        <select id="post-canal"><option>Instagram</option><option>LinkedIn</option><option>Facebook</option><option>TikTok</option><option>WhatsApp</option><option>Web</option></select>
+      </div>
+      <div class="form-group"><label>Tipo</label>
+        <select id="post-type"><option>Post</option><option>Story</option><option>Reel</option><option>Carrusel</option><option>Video</option><option>Artículo</option></select>
+      </div>
+      <div class="form-group"><label>Fecha</label><input id="post-date" type="date"></div>
+      <div class="form-group"><label>Hora</label><input id="post-time" type="time"></div>
+      <div class="form-group"><label>Estado</label>
+        <select id="post-status"><option>Borrador</option><option>En revisión</option><option>Programado</option><option>Publicado</option></select>
+      </div>
+      <div class="form-group"><label>Autor</label>
+        <select id="post-author"><option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa</option><option>Dylan</option></select>
+      </div>
+      <div class="form-group full"><label>Copy / Texto del post</label><textarea id="post-copy" placeholder="Escribe el texto del post aquí..." style="min-height:120px"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('post-modal')">Cancelar</button>
+      <button class="btn btn-primary" onclick="savePost()">Guardar post</button>
+    </div>
+  </div>
+</div>
+
+<!-- Task Modal -->
+<div id="task-modal" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-title">NUEVA TAREA <button class="modal-close" onclick="closeModal('task-modal')">×</button></div>
+    <div class="form-grid">
+      <div class="form-group full"><label>Tarea *</label><input id="task-text" placeholder="Descripción de la tarea"></div>
+      <div class="form-group"><label>Asignado a</label>
+        <select id="task-assignee"><option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa</option><option>Dylan</option></select>
+      </div>
+      <div class="form-group"><label>Prioridad</label>
+        <select id="task-priority"><option>Normal</option><option>Alta</option><option>Urgente</option><option>Baja</option></select>
+      </div>
+      <div class="form-group"><label>Fecha límite</label><input id="task-due" type="date"></div>
+      <div class="form-group"><label>Estado</label>
+        <select id="task-status"><option>Pendiente</option><option>En progreso</option><option>Completada</option></select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('task-modal')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveTask()">Guardar tarea</button>
+    </div>
+  </div>
+</div>
+
+<!-- Detail Modal -->
+<div id="detail-modal" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-title" id="detail-title">DETALLE <button class="modal-close" onclick="closeModal('detail-modal')">×</button></div>
+    <div id="detail-body"></div>
+    <div class="modal-footer" id="detail-footer"></div>
+  </div>
+</div>
+
+<script>
+// ============================
+// STATE
+// ============================
+var SCRIPT_URL = '';
+var OFFLINE_MODE = false;
+var CURRENT_USER = '';
+var CURRENT_USER_TITLE = '';
+var DB = { crm: [], assets: [], posts: [], tasks: [] };
+var CAL_YEAR = new Date().getFullYear();
+var CAL_MONTH = new Date().getMonth();
+var agentHistory = [];
+var editingId = { crm: null, assets: null, posts: null, tasks: null };
+
+// ============================
+// INIT
+// ============================
+window.onload = function() {
+  var saved = localStorage.getItem('heuristica_script_url');
+  if (saved) {
+    SCRIPT_URL = saved;
+    showScreen('login-screen');
+  } else {
+    showScreen('setup-screen');
+  }
+};
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(function(s){ s.style.display = 'none'; });
+  var el = document.getElementById(id);
+  if (el) { el.style.display = 'flex'; }
+}
+
+// ============================
+// SETUP
+// ============================
+function saveAndConnect() {
+  var url = document.getElementById('script-url-input').value.trim();
+  if (!url || url.indexOf('script.google.com') < 0) {
+    showSetupStatus('Pega una URL válida de Google Apps Script', 'err');
+    return;
+  }
+  showSetupStatus('Conectando...', 'info');
+  callAPI(url, { action: 'ping' }, function(ok, data) {
+    if (ok) {
+      SCRIPT_URL = url;
+      localStorage.setItem('heuristica_script_url', url);
+      showSetupStatus('¡Conexión exitosa! Redirigiendo...', 'ok');
+      setTimeout(function(){ showScreen('login-screen'); }, 1000);
+    } else {
+      showSetupStatus('No se pudo conectar. Verifica la URL y los permisos del deploy.', 'err');
+    }
+  });
+}
+
+function showSetupStatus(msg, type) {
+  var el = document.getElementById('setup-status');
+  el.textContent = msg;
+  el.className = 'status-msg status-' + type;
+  el.style.display = 'block';
+}
+
+function enterOffline() {
+  OFFLINE_MODE = true;
+  showScreen('login-screen');
+}
+
+function reconfig() {
+  localStorage.removeItem('heuristica_script_url');
+  SCRIPT_URL = '';
+  document.getElementById('script-url-input').value = '';
+  var st = document.getElementById('setup-status');
+  st.style.display = 'none';
+  showScreen('setup-screen');
+}
+
+// ============================
+// LOGIN
+// ============================
+function selectRole(el, name, title) {
+  document.querySelectorAll('.role-btn').forEach(function(b){ b.classList.remove('selected'); });
+  el.classList.add('selected');
+  CURRENT_USER = name;
+  CURRENT_USER_TITLE = title;
+  document.getElementById('login-btn').disabled = false;
+}
+
+function enterApp() {
+  if (!CURRENT_USER) return;
+  document.getElementById('user-chip').textContent = CURRENT_USER + ' · ' + CURRENT_USER_TITLE;
+  showScreen('app-screen');
+  document.getElementById('app-screen').style.display = 'flex';
+  refreshAll();
+}
+
+// ============================
+// API CALL
+// ============================
+function callAPI(url, payload, cb) {
+  var apiUrl = url + '?data=' + encodeURIComponent(JSON.stringify(payload));
+  fetch(apiUrl)
+    .then(function(r){ return r.json(); })
+    .then(function(d){ cb(d.status === 'ok' || d.status === 'pong', d); })
+    .catch(function(){ cb(false, null); });
+}
+
+function api(payload, cb) {
+  if (OFFLINE_MODE || !SCRIPT_URL) {
+    cb(true, { status: 'ok', data: [] });
+    return;
+  }
+  callAPI(SCRIPT_URL, payload, cb);
+}
+
+// ============================
+// DATA MANAGEMENT
+// ============================
+function refreshAll() {
+  loadSheet('crm', function(rows){ DB.crm = rows; renderCRM(); });
+  loadSheet('assets', function(rows){ DB.assets = rows; renderAssets(); });
+  loadSheet('posts', function(rows){ DB.posts = rows; renderCalendar(); renderPostsList(); });
+  loadSheet('tasks', function(rows){ DB.tasks = rows; renderTasks(); });
+}
+
+function loadSheet(sheet, cb) {
+  api({ action: 'getAll', sheet: sheet }, function(ok, d) {
+    if (ok && d && d.data) cb(d.data);
+    else cb([]);
+  });
+}
+
+function genId() {
+  return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+}
+
+// ============================
+// CRM
+// ============================
+var STAGES = ['Prospecto','Contactado','Interesado','Propuesta','Negociación','Cerrado ✓','Descartado'];
+var STAGE_COLORS = { 'Prospecto':'badge-gris','Contactado':'badge-azul','Interesado':'badge-amarillo','Propuesta':'badge-amarillo','Negociación':'badge-fire','Cerrado ✓':'badge-verde','Descartado':'badge-rojo' };
+
+function renderCRM() {
+  var search = (document.getElementById('crm-search').value||'').toLowerCase();
+  var stage = document.getElementById('crm-filter-stage').value;
+  var owner = document.getElementById('crm-filter-owner').value;
+  var data = DB.crm.filter(function(r){
+    return (!search || (r.company||'').toLowerCase().indexOf(search)>=0 || (r.contact||'').toLowerCase().indexOf(search)>=0)
+      && (!stage || r.stage === stage)
+      && (!owner || r.owner === owner);
+  });
+
+  // Stats
+  var total = DB.crm.length;
+  var hot = DB.crm.filter(function(r){ return r.salesFlag === '1'; }).length;
+  var closed = DB.crm.filter(function(r){ return r.stage === 'Cerrado ✓'; }).length;
+  var active = DB.crm.filter(function(r){ return r.stage !== 'Descartado' && r.stage !== 'Cerrado ✓'; }).length;
+  document.getElementById('crm-stats').innerHTML =
+    statCard(total,'Total prospectos') +
+    statCard(hot,'🔥 Hot leads') +
+    statCard(active,'En proceso') +
+    statCard(closed,'Cerrados');
+
+  // Pipeline
+  var pipeHTML = '<div class="pipeline">';
+  STAGES.forEach(function(s) {
+    var items = data.filter(function(r){ return r.stage === s; });
+    pipeHTML += '<div class="pipe-col"><div class="pipe-label">' + s + '<span class="pipe-count">' + items.length + '</span></div>';
+    if (items.length === 0) pipeHTML += '<div style="font-size:11px;color:var(--text2);padding:8px 0">Sin prospectos</div>';
+    items.forEach(function(r) {
+      pipeHTML += '<div class="pipe-card" onclick="showCRMDetail(\'' + r.id + '\')">' +
+        '<div class="pipe-company">' + (r.salesFlag==='1'?'🔥 ':'') + (r.company||'Sin nombre') + '</div>' +
+        '<div class="pipe-owner">' + (r.owner||'—') + ' · ' + (r.segment||'—') + '</div></div>';
+    });
+    pipeHTML += '</div>';
+  });
+  pipeHTML += '</div>';
+  document.getElementById('crm-pipeline').innerHTML = pipeHTML;
+
+  // Table
+  if (data.length === 0) {
+    document.getElementById('crm-table-wrap').innerHTML = emptyState('🏢','Sin prospectos','Agrega tu primer prospecto con el botón de arriba.');
+    return;
+  }
+  var tHTML = '<div class="table-wrap"><table><thead><tr><th>Empresa</th><th>Contacto</th><th>Canal</th><th>Etapa</th><th>Responsable</th><th>Notas</th><th>Acciones</th></tr></thead><tbody>';
+  data.forEach(function(r) {
+    tHTML += '<tr>' +
+      '<td><strong>' + (r.salesFlag==='1'?'🔥 ':'') + (r.company||'—') + '</strong><br><span style="font-size:11px;color:var(--text2)">' + (r.segment||'') + '</span></td>' +
+      '<td>' + (r.contact||'—') + '<br><span style="font-size:11px;color:var(--text2)">' + (r.title||'') + '</span></td>' +
+      '<td>' + badge(r.canal||'—','badge-azul') + '</td>' +
+      '<td>' + badge(r.stage||'—', STAGE_COLORS[r.stage]||'badge-gris') + '</td>' +
+      '<td>' + (r.owner||'—') + '</td>' +
+      '<td style="max-width:200px;font-size:12px;color:var(--text2)">' + ((r.notes||'').substr(0,60) + (r.notes&&r.notes.length>60?'...':'')) + '</td>' +
+      '<td><button class="btn btn-secondary btn-sm" onclick="editCRM(\'' + r.id + '\')">✏️</button> <button class="btn btn-danger btn-sm" onclick="deleteCRM(\'' + r.id + '\')">🗑</button></td></tr>';
+  });
+  tHTML += '</tbody></table></div>';
+  document.getElementById('crm-table-wrap').innerHTML = tHTML;
+}
+
+function saveCRM() {
+  var company = document.getElementById('crm-company').value.trim();
+  if (!company) { toast('El nombre de empresa es obligatorio','error'); return; }
+  var row = {
+    id: editingId.crm || genId(),
+    company: company,
+    segment: document.getElementById('crm-segment').value,
+    contact: document.getElementById('crm-contact').value,
+    title: document.getElementById('crm-title').value,
+    email: document.getElementById('crm-email').value,
+    phone: document.getElementById('crm-phone').value,
+    canal: document.getElementById('crm-canal').value,
+    stage: document.getElementById('crm-stage').value,
+    owner: document.getElementById('crm-owner').value,
+    salesFlag: document.getElementById('crm-salesflag').value,
+    notes: document.getElementById('crm-notes').value,
+    date: new Date().toISOString().split('T')[0],
+    updated: new Date().toISOString().split('T')[0]
+  };
+  var action = editingId.crm ? 'update' : 'insert';
+  api({ action: action, sheet: 'crm', id: row.id, row: row }, function(ok) {
+    if (ok) {
+      if (editingId.crm) {
+        DB.crm = DB.crm.map(function(r){ return r.id===row.id?row:r; });
+      } else {
+        DB.crm.push(row);
+      }
+      renderCRM();
+      closeModal('crm-modal');
+      resetCRMForm();
+      toast('Prospecto guardado ✓');
+    } else {
+      DB.crm.push(row); renderCRM();
+      closeModal('crm-modal'); resetCRMForm();
+      toast('Guardado localmente (sin conexión)');
+    }
+  });
+}
+
+function resetCRMForm() {
+  ['crm-company','crm-contact','crm-title','crm-email','crm-phone','crm-notes'].forEach(function(id){ document.getElementById(id).value=''; });
+  ['crm-segment','crm-canal'].forEach(function(id){ document.getElementById(id).value=''; });
+  document.getElementById('crm-stage').value = 'Prospecto';
+  document.getElementById('crm-owner').value = CURRENT_USER || 'Axel';
+  document.getElementById('crm-salesflag').value = '0';
+  editingId.crm = null;
+  document.querySelector('#crm-modal .modal-title').childNodes[0].textContent = 'NUEVO PROSPECTO ';
+}
+
+function editCRM(id) {
+  var r = DB.crm.find(function(x){ return x.id===id; });
+  if (!r) return;
+  editingId.crm = id;
+  document.getElementById('crm-company').value = r.company||'';
+  document.getElementById('crm-segment').value = r.segment||'';
+  document.getElementById('crm-contact').value = r.contact||'';
+  document.getElementById('crm-title').value = r.title||'';
+  document.getElementById('crm-email').value = r.email||'';
+  document.getElementById('crm-phone').value = r.phone||'';
+  document.getElementById('crm-canal').value = r.canal||'';
+  document.getElementById('crm-stage').value = r.stage||'Prospecto';
+  document.getElementById('crm-owner').value = r.owner||'Axel';
+  document.getElementById('crm-salesflag').value = r.salesFlag||'0';
+  document.getElementById('crm-notes').value = r.notes||'';
+  document.querySelector('#crm-modal .modal-title').childNodes[0].textContent = 'EDITAR PROSPECTO ';
+  openModal('crm-modal');
+}
+
+function deleteCRM(id) {
+  if (!confirm('¿Eliminar este prospecto?')) return;
+  api({ action: 'delete', sheet: 'crm', id: id }, function(ok) {
+    DB.crm = DB.crm.filter(function(r){ return r.id!==id; });
+    renderCRM();
+    toast('Prospecto eliminado');
+  });
+}
+
+function showCRMDetail(id) {
+  var r = DB.crm.find(function(x){ return x.id===id; });
+  if (!r) return;
+  document.getElementById('detail-title').innerHTML = (r.salesFlag==='1'?'🔥 ':'') + (r.company||'') + ' <button class="modal-close" onclick="closeModal(\'detail-modal\')">×</button>';
+  document.getElementById('detail-body').innerHTML =
+    '<div class="form-grid">' +
+    detailField('Empresa', r.company) + detailField('Segmento', r.segment) +
+    detailField('Contacto', r.contact) + detailField('Puesto', r.title) +
+    detailField('Email', r.email) + detailField('Teléfono', r.phone) +
+    detailField('Canal', r.canal) + detailField('Etapa', badge(r.stage||'—', STAGE_COLORS[r.stage]||'badge-gris')) +
+    detailField('Responsable', r.owner) + detailField('Hot lead', r.salesFlag==='1'?'🔥 Sí':'No') +
+    '<div class="form-group full"><label>Notas</label><div style="font-size:13px;color:var(--text);white-space:pre-wrap">' + (r.notes||'Sin notas') + '</div></div>' +
+    '</div>';
+  document.getElementById('detail-footer').innerHTML =
+    '<button class="btn btn-secondary" onclick="closeModal(\'detail-modal\')">Cerrar</button>' +
+    '<button class="btn btn-primary" onclick="closeModal(\'detail-modal\');editCRM(\'' + r.id + '\')">Editar</button>';
+  openModal('detail-modal');
+}
+
+// ============================
+// ASSETS
+// ============================
+var ASSET_ICONS = { 'Imagen':'🖼️','Video':'🎬','Documento':'📄','Plantilla':'📋','Enlace':'🔗','Audio':'🎵','Otro':'📦' };
+
+function renderAssets() {
+  var search = (document.getElementById('asset-search').value||'').toLowerCase();
+  var type = document.getElementById('asset-filter-type').value;
+  var canal = document.getElementById('asset-filter-canal').value;
+  var data = DB.assets.filter(function(r){
+    return (!search || (r.name||'').toLowerCase().indexOf(search)>=0)
+      && (!type || r.type===type) && (!canal || r.canal===canal);
+  });
+  var grid = document.getElementById('assets-grid');
+  if (data.length === 0) { grid.innerHTML = emptyState('📦','Sin assets','Agrega tu primer asset con el botón de arriba.'); return; }
+  grid.innerHTML = data.map(function(r) {
+    return '<div class="asset-card" onclick="showAssetDetail(\'' + r.id + '\')">' +
+      '<div class="asset-icon">' + (ASSET_ICONS[r.type]||'📦') + '</div>' +
+      '<div class="asset-name">' + (r.name||'Sin nombre') + '</div>' +
+      '<div class="asset-meta">' + badge(r.type||'Otro','badge-azul') + ' ' + badge(r.canal||'General','badge-gris') + '</div>' +
+      '<div class="asset-meta" style="margin-top:8px">' + badge(r.status||'Activo', r.status==='Activo'?'badge-verde':'badge-amarillo') + '</div>' +
+      '</div>';
+  }).join('');
+}
+
+function saveAsset() {
+  var name = document.getElementById('asset-name').value.trim();
+  if (!name) { toast('El nombre es obligatorio','error'); return; }
+  var row = {
+    id: editingId.assets || genId(),
+    name: name,
+    type: document.getElementById('asset-type').value,
+    category: document.getElementById('asset-cat').value,
+    link: document.getElementById('asset-link').value,
+    canal: document.getElementById('asset-canal').value,
+    status: document.getElementById('asset-status').value,
+    notes: document.getElementById('asset-notes').value,
+    date: new Date().toISOString().split('T')[0],
+    uploader: CURRENT_USER
+  };
+  var action = editingId.assets ? 'update' : 'insert';
+  api({ action: action, sheet: 'assets', id: row.id, row: row }, function(ok) {
+    if (editingId.assets) { DB.assets = DB.assets.map(function(r){ return r.id===row.id?row:r; }); }
+    else { DB.assets.push(row); }
+    renderAssets();
+    closeModal('asset-modal');
+    resetAssetForm();
+    toast('Asset guardado ✓');
+  });
+}
+
+function resetAssetForm() {
+  ['asset-name','asset-cat','asset-link','asset-notes'].forEach(function(id){ document.getElementById(id).value=''; });
+  document.getElementById('asset-type').value='';
+  document.getElementById('asset-canal').value='';
+  document.getElementById('asset-status').value='Activo';
+  editingId.assets=null;
+}
+
+function showAssetDetail(id) {
+  var r = DB.assets.find(function(x){ return x.id===id; });
+  if (!r) return;
+  document.getElementById('detail-title').innerHTML = (ASSET_ICONS[r.type]||'📦') + ' ' + (r.name||'') + ' <button class="modal-close" onclick="closeModal(\'detail-modal\')">×</button>';
+  document.getElementById('detail-body').innerHTML =
+    '<div class="form-grid">' +
+    detailField('Tipo', badge(r.type||'—','badge-azul')) + detailField('Categoría', r.category) +
+    detailField('Canal', r.canal) + detailField('Estado', badge(r.status||'—',r.status==='Activo'?'badge-verde':'badge-amarillo')) +
+    detailField('Subido por', r.uploader) + detailField('Fecha', r.date) +
+    (r.link?'<div class="form-group full"><label>Link</label><a href="'+r.link+'" target="_blank" style="color:var(--verde);font-size:13px;word-break:break-all">'+r.link+'</a></div>':'') +
+    (r.notes?'<div class="form-group full"><label>Notas</label><div style="font-size:13px;color:var(--text)">'+(r.notes||'')+'</div></div>':'') +
+    '</div>';
+  document.getElementById('detail-footer').innerHTML =
+    '<button class="btn btn-secondary" onclick="closeModal(\'detail-modal\')">Cerrar</button>' +
+    (r.link?'<a href="'+r.link+'" target="_blank" class="btn btn-primary">Abrir asset →</a>':'');
+  openModal('detail-modal');
+}
+
+// ============================
+// CALENDAR / POSTS
+// ============================
+var MONTHS_ES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+var DAYS_ES = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+
+function prevMonth(){ CAL_MONTH--; if(CAL_MONTH<0){CAL_MONTH=11;CAL_YEAR--;} renderCalendar(); renderPostsList(); }
+function nextMonth(){ CAL_MONTH++; if(CAL_MONTH>11){CAL_MONTH=0;CAL_YEAR++;} renderCalendar(); renderPostsList(); }
+
+function renderCalendar() {
+  document.getElementById('cal-month-label').textContent = MONTHS_ES[CAL_MONTH] + ' ' + CAL_YEAR;
+  var today = new Date(); var toDay = today.getDate(); var toMonth = today.getMonth(); var toYear = today.getFullYear();
+  var firstDay = new Date(CAL_YEAR, CAL_MONTH, 1).getDay();
+  var daysInMonth = new Date(CAL_YEAR, CAL_MONTH+1, 0).getDate();
+  var postsThisMonth = DB.posts.filter(function(p){
+    var d = p.date ? p.date.substr(0,7) : '';
+    return d === CAL_YEAR+'-'+String(CAL_MONTH+1).padStart(2,'0');
+  });
+
+  var html = '<div class="cal-grid">';
+  DAYS_ES.forEach(function(d){ html += '<div class="cal-header">'+d+'</div>'; });
+  for(var i=0;i<firstDay;i++) html += '<div class="cal-day empty"></div>';
+  for(var day=1;day<=daysInMonth;day++) {
+    var isToday = day===toDay && CAL_MONTH===toMonth && CAL_YEAR===toYear;
+    var dayStr = CAL_YEAR+'-'+String(CAL_MONTH+1).padStart(2,'0')+'-'+String(day).padStart(2,'0');
+    var dayPosts = postsThisMonth.filter(function(p){ return p.date===dayStr; });
+    html += '<div class="cal-day'+(isToday?' today':'') + '" onclick="openPostOnDate(\'' + dayStr + '\')">' +
+      '<div class="cal-day-num">'+day+'</div>';
+    dayPosts.slice(0,3).forEach(function(p){
+      var cls = p.status==='Publicado'?'':'(p.status==="Programado"?"scheduled":"draft")';
+      var statusClass = p.status==='Publicado'?'cal-post':p.status==='Programado'?'cal-post scheduled':'cal-post draft';
+      html += '<div class="'+statusClass+'" title="'+p.title+'">'+(p.canal?p.canal.substr(0,2)+' ':'')+p.title+'</div>';
+    });
+    if(dayPosts.length>3) html += '<div style="font-size:9px;color:var(--text2)">+' + (dayPosts.length-3) + ' más</div>';
+    html += '</div>';
+  }
+  html += '</div>';
+  document.getElementById('calendar-wrap').innerHTML = html;
+}
+
+function openPostOnDate(date) {
+  document.getElementById('post-date').value = date;
+  openModal('post-modal');
+}
+
+function renderPostsList() {
+  var data = DB.posts.filter(function(p){
+    var d = p.date ? p.date.substr(0,7) : '';
+    return d === CAL_YEAR+'-'+String(CAL_MONTH+1).padStart(2,'0');
+  }).sort(function(a,b){ return (a.date||'').localeCompare(b.date||''); });
+  if(data.length===0){ document.getElementById('posts-list').innerHTML=emptyState('📅','Sin posts este mes',''); return; }
+  var STATUS_COLOR = { 'Publicado':'badge-verde','Programado':'badge-azul','En revisión':'badge-amarillo','Borrador':'badge-gris' };
+  var html = '<div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Título</th><th>Canal</th><th>Tipo</th><th>Estado</th><th>Autor</th><th>Acciones</th></tr></thead><tbody>';
+  data.forEach(function(r){
+    html += '<tr><td>'+r.date+'</td><td>'+r.title+'</td><td>'+badge(r.canal||'—','badge-azul')+'</td><td>'+badge(r.type||'—','badge-gris')+'</td><td>'+badge(r.status||'—',STATUS_COLOR[r.status]||'badge-gris')+'</td><td>'+r.author+'</td><td><button class="btn btn-danger btn-sm" onclick="deletePost(\''+r.id+'\')">🗑</button></td></tr>';
+  });
+  html += '</tbody></table></div>';
+  document.getElementById('posts-list').innerHTML = html;
+}
+
+function savePost() {
+  var title = document.getElementById('post-title').value.trim();
+  if (!title) { toast('El título es obligatorio','error'); return; }
+  var row = {
+    id: genId(), title: title,
+    canal: document.getElementById('post-canal').value,
+    date: document.getElementById('post-date').value,
+    time: document.getElementById('post-time').value,
+    type: document.getElementById('post-type').value,
+    status: document.getElementById('post-status').value,
+    copy: document.getElementById('post-copy').value,
+    author: document.getElementById('post-author').value,
+    created: new Date().toISOString().split('T')[0]
+  };
+  api({ action: 'insert', sheet: 'posts', row: row }, function(ok) {
+    DB.posts.push(row); renderCalendar(); renderPostsList();
+    closeModal('post-modal'); resetPostForm();
+    toast('Post guardado ✓');
+  });
+}
+
+function resetPostForm() {
+  ['post-title','post-copy','post-date','post-time'].forEach(function(id){ document.getElementById(id).value=''; });
+  document.getElementById('post-status').value='Borrador';
+  document.getElementById('post-author').value=CURRENT_USER||'Axel';
+}
+
+function deletePost(id) {
+  if(!confirm('¿Eliminar este post?')) return;
+  api({ action:'delete', sheet:'posts', id:id }, function(ok){
+    DB.posts = DB.posts.filter(function(r){ return r.id!==id; });
+    renderCalendar(); renderPostsList(); toast('Post eliminado');
+  });
+}
+
+// ============================
+// TASKS
+// ============================
+var PRIORITY_COLOR = { 'Urgente':'badge-rojo','Alta':'badge-fire','Normal':'badge-azul','Baja':'badge-gris' };
+
+function renderTasks() {
+  var filter = document.getElementById('task-filter-assignee').value;
+  var data = DB.tasks.filter(function(r){ return !filter || r.assignee===filter; });
+  var pending = data.filter(function(r){ return r.status!=='Completada'; });
+  var done = data.filter(function(r){ return r.status==='Completada'; });
+  var html = '';
+  if (pending.length===0 && done.length===0) { document.getElementById('tasks-list').innerHTML=emptyState('✅','Sin tareas','Agrega tu primera tarea con el botón de arriba.'); return; }
+  pending.forEach(function(r){ html += taskItem(r); });
+  if(done.length>0){
+    html += '<div style="font-size:11px;color:var(--text2);margin:16px 0 8px;text-transform:uppercase;letter-spacing:1px">Completadas ('+done.length+')</div>';
+    done.forEach(function(r){ html += taskItem(r); });
+  }
+  document.getElementById('tasks-list').innerHTML = html;
+}
+
+function taskItem(r) {
+  var done = r.status==='Completada';
+  return '<div class="task-item">' +
+    '<div class="task-check' + (done?' done':'') + '" onclick="toggleTask(\'' + r.id + '\')"></div>' +
+    '<div style="flex:1"><div class="task-text' + (done?' done':'') + '">' + (r.text||'') + '</div>' +
+    '<div class="task-meta">' + (r.assignee||'') + (r.due?' · 📅 '+r.due:'') + ' ' + badge(r.priority||'Normal', PRIORITY_COLOR[r.priority]||'badge-gris') + '</div></div>' +
+    '<button class="btn btn-danger btn-sm" onclick="deleteTask(\'' + r.id + '\')">🗑</button></div>';
+}
+
+function toggleTask(id) {
+  var r = DB.tasks.find(function(x){ return x.id===id; });
+  if(!r) return;
+  r.status = r.status==='Completada'?'Pendiente':'Completada';
+  api({ action:'update', sheet:'tasks', id:id, row:r }, function(ok){
+    renderTasks();
+  });
+}
+
+function saveTask() {
+  var text = document.getElementById('task-text').value.trim();
+  if(!text){ toast('La descripción es obligatoria','error'); return; }
+  var row = {
+    id: genId(), text: text,
+    assignee: document.getElementById('task-assignee').value,
+    priority: document.getElementById('task-priority').value,
+    due: document.getElementById('task-due').value,
+    status: document.getElementById('task-status').value,
+    created: new Date().toISOString().split('T')[0]
+  };
+  api({ action:'insert', sheet:'tasks', row:row }, function(ok){
+    DB.tasks.push(row); renderTasks();
+    closeModal('task-modal'); resetTaskForm();
+    toast('Tarea guardada ✓');
+  });
+}
+
+function resetTaskForm() {
+  document.getElementById('task-text').value='';
+  document.getElementById('task-due').value='';
+  document.getElementById('task-priority').value='Normal';
+  document.getElementById('task-status').value='Pendiente';
+  document.getElementById('task-assignee').value=CURRENT_USER||'Axel';
+}
+
+function deleteTask(id) {
+  if(!confirm('¿Eliminar esta tarea?')) return;
+  api({ action:'delete', sheet:'tasks', id:id }, function(ok){
+    DB.tasks = DB.tasks.filter(function(r){ return r.id!==id; });
+    renderTasks(); toast('Tarea eliminada');
+  });
+}
+
+// ============================
+// AI AGENT
+// ============================
+function sendAgent() {
+  var input = document.getElementById('agent-input');
+  var msg = input.value.trim();
+  if(!msg) return;
+  input.value='';
+  appendMsg(msg,'user');
+  agentHistory.push({ role:'user', content:msg });
+  showTyping();
+
+  var context = buildContext();
+  var messages = [];
+  agentHistory.slice(-10).forEach(function(m){ messages.push({ role:m.role, content:m.content }); });
+  messages[messages.length-1].content = context + '\n\nPregunta del usuario: ' + msg;
+
+  fetch('https://api.anthropic.com/v1/messages', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({
+      model:'claude-sonnet-4-20250514',
+      max_tokens:1000,
+      system:'Eres el asistente de marketing de HEURISTICA, empresa de electromovilidad (electrolineras B2B en México y LATAM). Ayudas al equipo de marketing con análisis del CRM, sugerencias de contenido, seguimiento de tareas y estrategia. Responde siempre en español. Sé concreto y útil. Cuando cites datos del contexto, sé específico con nombres y números.',
+      messages: messages
+    })
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    hideTyping();
+    var text = (d.content&&d.content[0])?d.content[0].text:'Sin respuesta.';
+    agentHistory.push({ role:'assistant', content:text });
+    appendMsg(text,'agent');
+  })
+  .catch(function(){
+    hideTyping();
+    appendMsg('Error de conexión con la IA. Verifica tu conexión.','agent');
+  });
+}
+
+function buildContext() {
+  var crmInfo = 'CRM (' + DB.crm.length + ' prospectos): ';
+  crmInfo += DB.crm.slice(0,10).map(function(c){
+    return c.company + ' [' + c.stage + ', resp:' + c.owner + (c.salesFlag==='1'?' HOT':'') + ']';
+  }).join(', ');
+  var taskInfo = 'TAREAS (' + DB.tasks.length + ' total): ';
+  var pending = DB.tasks.filter(function(t){ return t.status!=='Completada'; });
+  taskInfo += pending.slice(0,8).map(function(t){ return t.text + ' (' + t.assignee + ')'; }).join(', ');
+  var postInfo = 'POSTS (' + DB.posts.length + ' total este mes)';
+  var assetInfo = 'ASSETS (' + DB.assets.length + ' total)';
+  return 'CONTEXTO OPS HUB:\n' + crmInfo + '\n' + taskInfo + '\n' + postInfo + '\n' + assetInfo;
+}
+
+function appendMsg(text, role) {
+  var msgs = document.getElementById('agent-messages');
+  var div = document.createElement('div');
+  div.className = 'msg msg-' + role;
+  div.innerHTML = text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function showTyping() {
+  var msgs = document.getElementById('agent-messages');
+  var t = document.createElement('div');
+  t.id='typing-indicator'; t.className='msg msg-agent';
+  t.innerHTML='<div class="typing"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
+  msgs.appendChild(t); msgs.scrollTop=msgs.scrollHeight;
+}
+
+function hideTyping() {
+  var t = document.getElementById('typing-indicator');
+  if(t) t.remove();
+}
+
+// ============================
+// UI HELPERS
+// ============================
+function showTab(name, el) {
+  document.querySelectorAll('.tab-content').forEach(function(t){ t.style.display='none'; });
+  document.querySelectorAll('.nav-item').forEach(function(n){ n.classList.remove('active'); });
+  document.getElementById('tab-'+name).style.display='block';
+  el.classList.add('active');
+  if(name==='crm') renderCRM();
+  if(name==='assets') renderAssets();
+  if(name==='calendar'){ renderCalendar(); renderPostsList(); }
+  if(name==='tasks') renderTasks();
+}
+
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+function toast(msg, type) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (type==='error'?' error':'') + ' show';
+  setTimeout(function(){ t.classList.remove('show'); }, 3000);
+}
+
+function badge(text, cls) { return '<span class="badge ' + (cls||'badge-gris') + '">' + text + '</span>'; }
+
+function statCard(val, label) {
+  return '<div class="stat-card"><div class="stat-val">' + val + '</div><div class="stat-label">' + label + '</div></div>';
+}
+
+function emptyState(icon, title, desc) {
+  return '<div class="empty"><div class="empty-icon">' + icon + '</div><div class="empty-title">' + title + '</div><div class="empty-desc">' + desc + '</div></div>';
+}
+
+function detailField(label, val) {
+  return '<div class="form-group"><label>' + label + '</label><div style="font-size:13px;color:var(--text);padding:8px 0">' + (val||'—') + '</div></div>';
+}
+
+// Close modal on overlay click
+document.querySelectorAll('.modal-overlay').forEach(function(o){
+  o.addEventListener('click', function(e){
+    if(e.target===o) o.classList.remove('open');
+  });
+});
+</script>
+</body>
+</html>
