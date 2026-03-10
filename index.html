@@ -1376,6 +1376,10 @@ function setGuideDay(day) {
 
 
 
+function badge(text, cls) {
+  return '<span class="badge ' + (cls||'badge-gris') + '">' + (text||'—') + '</span>';
+}
+
 function statCard(val, label) {
   return '<div class="stat-card"><div class="stat-val">' + val + '</div><div class="stat-label">' + label + '</div></div>';
 }
