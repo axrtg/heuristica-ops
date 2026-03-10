@@ -348,6 +348,7 @@ textarea{resize:vertical;min-height:80px}
         <div class="panel-title">
           CALENDARIO DE CONTENIDO
           <div class="actions">
+            <button class="btn btn-secondary btn-sm" onclick="toggleParrilla()" id="btn-parrilla" title="Ver parrilla por canal">⊞ Parrilla</button>
             <button class="btn btn-secondary btn-sm" onclick="prevMonth()">←</button>
             <span id="cal-month-label" style="font-size:13px;color:var(--text)"></span>
             <button class="btn btn-secondary btn-sm" onclick="nextMonth()">→</button>
@@ -355,6 +356,7 @@ textarea{resize:vertical;min-height:80px}
           </div>
         </div>
         <div id="calendar-wrap"></div>
+        <div id="parrilla-wrap" style="display:none"></div>
       </div>
       <div class="panel">
         <div class="panel-title">POSTS DEL MES</div>
@@ -485,7 +487,8 @@ textarea{resize:vertical;min-height:80px}
       <div class="form-group"><label>Autor</label>
         <select id="post-author"><option>Mario</option><option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa G.</option><option>Melissa A.</option><option>Dylan</option><option>Jorge</option></select>
       </div>
-      <div class="form-group full"><label>Copy / Texto del post</label><textarea id="post-copy" placeholder="Escribe el texto del post aquí..." style="min-height:120px"></textarea></div>
+      <div class="form-group full"><label>Copy / Texto del post</label><textarea id="post-copy" placeholder="Escribe el texto del post aquí..." style="min-height:100px"></textarea></div>
+      <div class="form-group full"><label>🔗 Link del archivo en Drive <span style="font-size:11px;color:var(--text2);font-weight:400">(opcional — pega el link del video/imagen en Drive)</span></label><input id="post-drive-link" placeholder="https://drive.google.com/file/d/..."></div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeModal('post-modal')">Cancelar</button>
@@ -535,7 +538,7 @@ var SCRIPT_URL = '';
 var OFFLINE_MODE = false;
 var CURRENT_USER = '';
 var CURRENT_USER_TITLE = '';
-var DB = { crm: [], assets: [], posts: [], tasks: [] };
+var DB = { crm: [], assets: [], posts: [], tasks: [], guide: [] };
 var CAL_YEAR = new Date().getFullYear();
 var CAL_MONTH = new Date().getMonth();
 
@@ -651,6 +654,7 @@ function refreshAll() {
   loadSheet('assets', function(rows){ DB.assets = rows; renderAssets(); });
   loadSheet('posts', function(rows){ DB.posts = rows; renderCalendar(); renderPostsList(); });
   loadSheet('tasks', function(rows){ DB.tasks = rows; renderTasks(); });
+  loadSheet('guide', function(rows){ DB.guide = rows; renderGuide(); });
 }
 
 function loadSheet(sheet, cb) {
@@ -938,6 +942,81 @@ function openPostOnDate(date) {
   openModal('post-modal');
 }
 
+// ============================
+// PARRILLA SEMANAL POR CANAL
+// ============================
+var _parillaVisible = false;
+
+function toggleParrilla() {
+  _parillaVisible = !_parillaVisible;
+  document.getElementById('calendar-wrap').style.display = _parillaVisible ? 'none' : '';
+  document.getElementById('parrilla-wrap').style.display = _parillaVisible ? '' : 'none';
+  document.getElementById('btn-parrilla').style.borderColor = _parillaVisible ? 'var(--verde)' : '';
+  document.getElementById('btn-parrilla').style.color = _parillaVisible ? 'var(--verde)' : '';
+  if (_parillaVisible) renderParrilla();
+}
+
+function renderParrilla() {
+  var CANALES = ['Instagram','LinkedIn','Facebook','TikTok','WhatsApp','Web'];
+  var CANAL_COLOR = {
+    'Instagram': '#e1306c', 'LinkedIn': '#0077b5', 'Facebook': '#1877f2',
+    'TikTok': '#69c9d0', 'WhatsApp': '#25d366', 'Web': '#E8C615'
+  };
+  var STATUS_COLOR = { 'Publicado':'badge-verde','Programado':'badge-azul','En revisión':'badge-amarillo','Borrador':'badge-gris' };
+
+  // Get posts of current month
+  var monthStr = CAL_YEAR + '-' + String(CAL_MONTH+1).padStart(2,'0');
+  var posts = DB.posts.filter(function(p){ return (p.date||'').substr(0,7) === monthStr; });
+
+  var html = '<div style="margin-bottom:16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">';
+  html += '<span style="font-size:12px;color:var(--text2)">Vista parrilla — ' + MONTHS_ES[CAL_MONTH] + ' ' + CAL_YEAR + '</span>';
+  html += '<span style="font-size:11px;background:rgba(54,207,3,0.1);color:var(--verde);padding:2px 8px;border-radius:10px">' + posts.length + ' posts este mes</span>';
+  html += '</div>';
+
+  html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px">';
+
+  CANALES.forEach(function(canal) {
+    var canalPosts = posts.filter(function(p){ return p.canal === canal; })
+      .sort(function(a,b){ return (a.date||'').localeCompare(b.date||''); });
+
+    var color = CANAL_COLOR[canal] || 'var(--verde)';
+    html += '<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden">';
+    html += '<div style="padding:12px 16px;background:rgba(0,0,0,0.3);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px">';
+    html += '<span style="width:10px;height:10px;border-radius:50%;background:' + color + ';display:inline-block;flex-shrink:0"></span>';
+    html += '<span style="font-weight:600;font-size:13px;color:var(--text)">' + canal + '</span>';
+    html += '<span style="margin-left:auto;font-size:11px;color:var(--text2)">' + canalPosts.length + ' posts</span>';
+    html += '</div>';
+    html += '<div style="padding:12px;display:flex;flex-direction:column;gap:8px;min-height:60px">';
+
+    if (canalPosts.length === 0) {
+      html += '<div style="font-size:12px;color:var(--text2);text-align:center;padding:16px 0">Sin posts este mes</div>';
+    } else {
+      canalPosts.forEach(function(p) {
+        var sc = STATUS_COLOR[p.status] || 'badge-gris';
+        html += '<div style="background:rgba(3,18,68,0.6);border:1px solid var(--border);border-radius:8px;padding:10px 12px">';
+        html += '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px">';
+        html += '<span style="font-size:12px;font-weight:600;color:var(--text);line-height:1.4">' + p.title + '</span>';
+        html += '<span class="badge ' + sc + '" style="flex-shrink:0;font-size:9px">' + (p.status||'—') + '</span>';
+        html += '</div>';
+        html += '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">';
+        html += '<span style="font-size:10px;color:var(--text2)">📅 ' + (p.date||'Sin fecha') + '</span>';
+        if (p.type) html += '<span style="font-size:10px;color:var(--text2)">· ' + p.type + '</span>';
+        if (p.author) html += '<span style="font-size:10px;color:var(--text2)">· ' + p.author + '</span>';
+        html += '</div>';
+        if (p.driveLink) {
+          html += '<div style="margin-top:6px"><a href="' + p.driveLink + '" target="_blank" style="font-size:10px;color:var(--verde);text-decoration:none">📁 Ver en Drive →</a></div>';
+        }
+        html += '</div>';
+      });
+    }
+
+    html += '</div></div>';
+  });
+
+  html += '</div>';
+  document.getElementById('parrilla-wrap').innerHTML = html;
+}
+
 function renderPostsList() {
   var data = DB.posts.filter(function(p){
     var d = p.date ? p.date.substr(0,7) : '';
@@ -965,18 +1044,20 @@ function savePost() {
     status: document.getElementById('post-status').value,
     copy: document.getElementById('post-copy').value,
     author: document.getElementById('post-author').value,
+    driveLink: document.getElementById('post-drive-link').value.trim(),
     created: new Date().toISOString().split('T')[0]
   };
   api({ action: 'insert', sheet: 'posts', row: row }, function(ok) {
     if (!ok) toast('⚠️ Error al sincronizar con el servidor', 'error');
   });
   DB.posts.push(row); renderCalendar(); renderPostsList();
+  if (typeof _parillaVisible !== 'undefined' && _parillaVisible) renderParrilla();
   closeModal('post-modal'); resetPostForm();
   toast('Post guardado ✓');
 }
 
 function resetPostForm() {
-  ['post-title','post-copy','post-date','post-time'].forEach(function(id){ document.getElementById(id).value=''; });
+  ['post-title','post-copy','post-date','post-time','post-drive-link'].forEach(function(id){ document.getElementById(id).value=''; });
   document.getElementById('post-status').value='Borrador';
   document.getElementById('post-author').value=CURRENT_USER||'Axel';
 }
@@ -1395,10 +1476,51 @@ var WEEKLY_GUIDE = {
 
 var DAYS_ORDER = ['Lunes','Martes','Miércoles','Jueves','Viernes'];
 
+// Builds a guide structure from Sheets rows (cols: rol, dia, tarea, orden)
+// Falls back to WEEKLY_GUIDE if sheet is empty
+function buildGuideFromSheet(rows) {
+  if (!rows || rows.length === 0) return null;
+  var result = {};
+  rows.forEach(function(r) {
+    var key = (r.rol || '').trim();
+    var dia = (r.dia || '').trim();
+    var tarea = (r.tarea || '').trim();
+    if (!key || !dia || !tarea) return;
+    if (!result[key]) {
+      // Inherit meta from hardcoded if exists, otherwise use defaults
+      var meta = WEEKLY_GUIDE[key] || {};
+      result[key] = {
+        role: meta.role || key,
+        color: meta.color || '#9d9d9c',
+        days: {}
+      };
+    }
+    if (!result[key].days[dia]) result[key].days[dia] = [];
+    result[key].days[dia].push(tarea);
+  });
+  return Object.keys(result).length > 0 ? result : null;
+}
+
 function renderGuide() {
+  // Use Sheets data if available, otherwise fall back to hardcoded
+  var guideData = (DB.guide && DB.guide.length > 0)
+    ? (buildGuideFromSheet(DB.guide) || WEEKLY_GUIDE)
+    : WEEKLY_GUIDE;
+
+  var usingSheets = DB.guide && DB.guide.length > 0 && buildGuideFromSheet(DB.guide);
+
   var filter = document.getElementById('guide-role-filter').value;
-  var roles = filter ? [filter] : Object.keys(WEEKLY_GUIDE);
+  var roles = filter ? [filter] : Object.keys(guideData);
   var html = '';
+
+  // Source indicator
+  html += '<div style="margin-bottom:16px;display:flex;align-items:center;gap:8px">';
+  if (usingSheets) {
+    html += '<span style="font-size:11px;background:rgba(54,207,3,0.15);color:var(--verde);padding:3px 10px;border-radius:20px;border:1px solid rgba(54,207,3,0.3)">✦ Datos desde Google Sheets</span>';
+  } else {
+    html += '<span style="font-size:11px;background:rgba(157,157,157,0.1);color:var(--text2);padding:3px 10px;border-radius:20px;border:1px solid var(--border)">📋 Guía predeterminada (el Sheet "guide" está vacío)</span>';
+  }
+  html += '</div>';
 
   // Day selector tabs
   var today = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'][new Date().getDay()];
@@ -1414,7 +1536,7 @@ function renderGuide() {
   html += '</div>';
 
   roles.forEach(function(roleName){
-    var data = WEEKLY_GUIDE[roleName];
+    var data = guideData[roleName];
     if(!data) return;
     var dayTasks = data.days[window._guideDay] || [];
 
