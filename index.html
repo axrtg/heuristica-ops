@@ -571,14 +571,12 @@ var editingId = { crm: null, assets: null, posts: null, tasks: null };
 // ============================
 // INIT
 // ============================
+var HARDCODED_URL = 'https://script.google.com/macros/s/AKfycbyZTJTxadnOvSw0poY2vTYPkTgtVpk0nWdHFA_5_AgOuLF2M4hOABivEXRFaRFkUiEY/exec';
+
 window.onload = function() {
-  var saved = localStorage.getItem('heuristica_script_url');
-  if (saved) {
-    SCRIPT_URL = saved;
-    showScreen('login-screen');
-  } else {
-    showScreen('setup-screen');
-  }
+  SCRIPT_URL = HARDCODED_URL;
+  localStorage.setItem('heuristica_script_url', HARDCODED_URL);
+  showScreen('login-screen');
 };
 
 function showScreen(id) {
