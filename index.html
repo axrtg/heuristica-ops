@@ -184,23 +184,7 @@ textarea{resize:vertical;min-height:80px}
 .asset-name{font-weight:600;font-size:13px;margin-bottom:4px;color:var(--text)}
 .asset-meta{font-size:11px;color:var(--text2)}
 
-/* AI AGENT */
-.agent-wrap{display:flex;flex-direction:column;height:calc(100vh - 200px);min-height:400px}
-.agent-messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;background:rgba(0,0,0,0.2);border:1px solid var(--border);border-radius:12px 12px 0 0}
-.msg{max-width:75%;padding:12px 16px;border-radius:12px;font-size:13px;line-height:1.6}
-.msg-user{background:rgba(54,207,3,0.1);border:1px solid rgba(54,207,3,0.2);color:var(--text);align-self:flex-end;border-radius:12px 12px 0 12px}
-.msg-agent{background:var(--bg3);border:1px solid var(--border);color:var(--text);align-self:flex-start;border-radius:12px 12px 12px 0}
-.msg-agent strong{color:var(--verde)}
-.agent-input-row{display:flex;gap:0;background:var(--bg2);border:1px solid var(--border2);border-top:none;border-radius:0 0 12px 12px;overflow:hidden}
-.agent-input{flex:1;background:transparent;border:none;padding:14px 16px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none}
-.agent-input::placeholder{color:var(--text2)}
-.agent-send{background:var(--verde);border:none;padding:14px 20px;cursor:pointer;color:#000;font-weight:700;font-size:14px;transition:.2s}
-.agent-send:hover{background:#2db803}
-.typing{display:flex;gap:4px;align-items:center;padding:14px 16px}
-.dot{width:6px;height:6px;border-radius:50%;background:var(--verde);animation:bounce .8s infinite}
-.dot:nth-child(2){animation-delay:.15s}
-.dot:nth-child(3){animation-delay:.3s}
-@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+
 
 /* FILTERS */
 .filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;align-items:center}
@@ -271,6 +255,7 @@ textarea{resize:vertical;min-height:80px}
     <div class="logo-sub">OPS HUB</div>
     <div class="login-title">¿QUIÉN ERES?</div>
     <div class="roles-grid" id="roles-grid">
+      <div class="role-btn" style="grid-column:1/-1;border-color:rgba(232,198,21,0.5);background:rgba(232,198,21,0.06)" onclick="selectRole(this,'Mario','CEO · Heuristica')"><div class="role-name" style="color:var(--amarillo)">⭐ Mario Alcalá</div><div class="role-title">CEO · Heuristica</div></div>
       <div class="role-btn" onclick="selectRole(this,'Axel','Director de Marketing')"><div class="role-name">Axel</div><div class="role-title">Director de Marketing</div></div>
       <div class="role-btn" onclick="selectRole(this,'Arturo','Diseñador Gráfico')"><div class="role-name">Arturo</div><div class="role-title">Diseñador Gráfico</div></div>
       <div class="role-btn" onclick="selectRole(this,'Alejandro','Estudiante de Marketing')"><div class="role-name">Alejandro</div><div class="role-title">Estudiante de Marketing</div></div>
@@ -301,7 +286,7 @@ textarea{resize:vertical;min-height:80px}
     <div class="nav-item" onclick="showTab('calendar',this)">Calendario</div>
     <div class="nav-item" onclick="showTab('tasks',this)">Tareas</div>
     <div class="nav-item" onclick="showTab('guide',this)">📋 Guía Semanal</div>
-    <div class="nav-item" onclick="showTab('agent',this)">Agente IA</div>
+
   </div>
   <div class="content">
 
@@ -323,7 +308,7 @@ textarea{resize:vertical;min-height:80px}
           </select>
           <select class="setup-input filter-select" id="crm-filter-owner" onchange="renderCRM()">
             <option value="">Todos</option>
-            <option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa</option><option>Dylan</option>
+            <option>Mario</option><option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa</option><option>Dylan</option>
           </select>
         </div>
         <div id="crm-pipeline"></div>
@@ -383,7 +368,7 @@ textarea{resize:vertical;min-height:80px}
           <div class="actions">
             <select class="setup-input filter-select" id="task-filter-assignee" onchange="renderTasks()">
               <option value="">Todos</option>
-              <option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa</option><option>Dylan</option>
+              <option>Mario</option><option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa</option><option>Dylan</option>
             </select>
             <button class="btn btn-primary btn-sm" onclick="openModal('task-modal')">+ Nueva tarea</button>
           </div>
@@ -400,7 +385,7 @@ textarea{resize:vertical;min-height:80px}
           <div class="actions">
             <select class="setup-input filter-select" id="guide-role-filter" onchange="renderGuide()">
               <option value="">Todos los roles</option>
-              <option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa</option><option>Dylan</option>
+              <option>Mario</option><option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa</option><option>Dylan</option>
             </select>
           </div>
         </div>
@@ -411,21 +396,7 @@ textarea{resize:vertical;min-height:80px}
       </div>
     </div>
 
-    <!-- AGENT TAB -->
-    <div id="tab-agent" class="tab-content" style="display:none">
-      <div class="panel">
-        <div class="panel-title">AGENTE IA · HEURISTICA</div>
-        <div class="agent-wrap">
-          <div id="agent-messages" class="agent-messages">
-            <div class="msg msg-agent">Hola, soy el Agente IA de Heuristica. Tengo acceso a todos los datos del OPS HUB: CRM, assets, calendario y tareas. ¿En qué puedo ayudarte hoy?</div>
-          </div>
-          <div class="agent-input-row">
-            <input id="agent-input" class="agent-input" type="text" placeholder="Escribe tu pregunta..." onkeydown="if(event.key==='Enter')sendAgent()">
-            <button class="agent-send" onclick="sendAgent()">→</button>
-          </div>
-        </div>
-      </div>
-    </div>
+
 
   </div>
 </div>
@@ -452,7 +423,7 @@ textarea{resize:vertical;min-height:80px}
         <select id="crm-stage"><option>Prospecto</option><option>Contactado</option><option>Interesado</option><option>Propuesta</option><option>Negociación</option><option>Cerrado ✓</option><option>Descartado</option></select>
       </div>
       <div class="form-group"><label>Responsable</label>
-        <select id="crm-owner"><option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa</option><option>Dylan</option></select>
+        <select id="crm-owner"><option>Mario</option><option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa</option><option>Dylan</option></select>
       </div>
       <div class="form-group"><label>🔥 Oportunidad de venta</label>
         <select id="crm-salesflag"><option value="0">No</option><option value="1">Sí — marcar como hot lead</option></select>
@@ -510,7 +481,7 @@ textarea{resize:vertical;min-height:80px}
         <select id="post-status"><option>Borrador</option><option>En revisión</option><option>Programado</option><option>Publicado</option></select>
       </div>
       <div class="form-group"><label>Autor</label>
-        <select id="post-author"><option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa</option><option>Dylan</option></select>
+        <select id="post-author"><option>Mario</option><option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa</option><option>Dylan</option></select>
       </div>
       <div class="form-group full"><label>Copy / Texto del post</label><textarea id="post-copy" placeholder="Escribe el texto del post aquí..." style="min-height:120px"></textarea></div>
     </div>
@@ -528,7 +499,7 @@ textarea{resize:vertical;min-height:80px}
     <div class="form-grid">
       <div class="form-group full"><label>Tarea *</label><input id="task-text" placeholder="Descripción de la tarea"></div>
       <div class="form-group"><label>Asignado a</label>
-        <select id="task-assignee"><option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa</option><option>Dylan</option></select>
+        <select id="task-assignee"><option>Mario</option><option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa</option><option>Dylan</option></select>
       </div>
       <div class="form-group"><label>Prioridad</label>
         <select id="task-priority"><option>Normal</option><option>Alta</option><option>Urgente</option><option>Baja</option></select>
@@ -565,7 +536,7 @@ var CURRENT_USER_TITLE = '';
 var DB = { crm: [], assets: [], posts: [], tasks: [] };
 var CAL_YEAR = new Date().getFullYear();
 var CAL_MONTH = new Date().getMonth();
-var agentHistory = [];
+
 var editingId = { crm: null, assets: null, posts: null, tasks: null };
 
 // ============================
@@ -774,22 +745,14 @@ function saveCRM() {
     updated: new Date().toISOString().split('T')[0]
   };
   var action = editingId.crm ? 'update' : 'insert';
+  if (editingId.crm) { DB.crm = DB.crm.map(function(r){ return r.id===row.id?row:r; }); }
+  else { DB.crm.push(row); }
+  renderCRM();
+  closeModal('crm-modal');
+  resetCRMForm();
+  toast('Prospecto guardado ✓');
   api({ action: action, sheet: 'crm', id: row.id, row: row }, function(ok) {
-    if (ok) {
-      if (editingId.crm) {
-        DB.crm = DB.crm.map(function(r){ return r.id===row.id?row:r; });
-      } else {
-        DB.crm.push(row);
-      }
-      renderCRM();
-      closeModal('crm-modal');
-      resetCRMForm();
-      toast('Prospecto guardado ✓');
-    } else {
-      DB.crm.push(row); renderCRM();
-      closeModal('crm-modal'); resetCRMForm();
-      toast('Guardado localmente (sin conexión)');
-    }
+    if (!ok) toast('⚠️ Error al sincronizar con el servidor', 'error');
   });
 }
 
@@ -891,13 +854,14 @@ function saveAsset() {
     uploader: CURRENT_USER
   };
   var action = editingId.assets ? 'update' : 'insert';
+  if (editingId.assets) { DB.assets = DB.assets.map(function(r){ return r.id===row.id?row:r; }); }
+  else { DB.assets.push(row); }
+  renderAssets();
+  closeModal('asset-modal');
+  resetAssetForm();
+  toast('Asset guardado ✓');
   api({ action: action, sheet: 'assets', id: row.id, row: row }, function(ok) {
-    if (editingId.assets) { DB.assets = DB.assets.map(function(r){ return r.id===row.id?row:r; }); }
-    else { DB.assets.push(row); }
-    renderAssets();
-    closeModal('asset-modal');
-    resetAssetForm();
-    toast('Asset guardado ✓');
+    if (!ok) toast('⚠️ Error al sincronizar con el servidor', 'error');
   });
 }
 
@@ -1002,10 +966,11 @@ function savePost() {
     created: new Date().toISOString().split('T')[0]
   };
   api({ action: 'insert', sheet: 'posts', row: row }, function(ok) {
-    DB.posts.push(row); renderCalendar(); renderPostsList();
-    closeModal('post-modal'); resetPostForm();
-    toast('Post guardado ✓');
+    if (!ok) toast('⚠️ Error al sincronizar con el servidor', 'error');
   });
+  DB.posts.push(row); renderCalendar(); renderPostsList();
+  closeModal('post-modal'); resetPostForm();
+  toast('Post guardado ✓');
 }
 
 function resetPostForm() {
@@ -1055,8 +1020,9 @@ function toggleTask(id) {
   var r = DB.tasks.find(function(x){ return x.id===id; });
   if(!r) return;
   r.status = r.status==='Completada'?'Pendiente':'Completada';
+  renderTasks();
   api({ action:'update', sheet:'tasks', id:id, row:r }, function(ok){
-    renderTasks();
+    if(!ok) toast('⚠️ Error al sincronizar', 'error');
   });
 }
 
@@ -1071,10 +1037,11 @@ function saveTask() {
     status: document.getElementById('task-status').value,
     created: new Date().toISOString().split('T')[0]
   };
+  DB.tasks.push(row); renderTasks();
+  closeModal('task-modal'); resetTaskForm();
+  toast('Tarea guardada ✓');
   api({ action:'insert', sheet:'tasks', row:row }, function(ok){
-    DB.tasks.push(row); renderTasks();
-    closeModal('task-modal'); resetTaskForm();
-    toast('Tarea guardada ✓');
+    if(!ok) toast('⚠️ Error al sincronizar con el servidor', 'error');
   });
 }
 
@@ -1092,81 +1059,6 @@ function deleteTask(id) {
     DB.tasks = DB.tasks.filter(function(r){ return r.id!==id; });
     renderTasks(); toast('Tarea eliminada');
   });
-}
-
-// ============================
-// AI AGENT
-// ============================
-function sendAgent() {
-  var input = document.getElementById('agent-input');
-  var msg = input.value.trim();
-  if(!msg) return;
-  input.value='';
-  appendMsg(msg,'user');
-  agentHistory.push({ role:'user', content:msg });
-  showTyping();
-
-  var context = buildContext();
-  var messages = [];
-  agentHistory.slice(-10).forEach(function(m){ messages.push({ role:m.role, content:m.content }); });
-  messages[messages.length-1].content = context + '\n\nPregunta del usuario: ' + msg;
-
-  fetch('https://api.anthropic.com/v1/messages', {
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({
-      model:'claude-sonnet-4-20250514',
-      max_tokens:1000,
-      system:'Eres el asistente de marketing de HEURISTICA, empresa de electromovilidad (electrolineras B2B en México y LATAM). Ayudas al equipo de marketing con análisis del CRM, sugerencias de contenido, seguimiento de tareas y estrategia. Responde siempre en español. Sé concreto y útil. Cuando cites datos del contexto, sé específico con nombres y números.',
-      messages: messages
-    })
-  })
-  .then(function(r){ return r.json(); })
-  .then(function(d){
-    hideTyping();
-    var text = (d.content&&d.content[0])?d.content[0].text:'Sin respuesta.';
-    agentHistory.push({ role:'assistant', content:text });
-    appendMsg(text,'agent');
-  })
-  .catch(function(){
-    hideTyping();
-    appendMsg('Error de conexión con la IA. Verifica tu conexión.','agent');
-  });
-}
-
-function buildContext() {
-  var crmInfo = 'CRM (' + DB.crm.length + ' prospectos): ';
-  crmInfo += DB.crm.slice(0,10).map(function(c){
-    return c.company + ' [' + c.stage + ', resp:' + c.owner + (c.salesFlag==='1'?' HOT':'') + ']';
-  }).join(', ');
-  var taskInfo = 'TAREAS (' + DB.tasks.length + ' total): ';
-  var pending = DB.tasks.filter(function(t){ return t.status!=='Completada'; });
-  taskInfo += pending.slice(0,8).map(function(t){ return t.text + ' (' + t.assignee + ')'; }).join(', ');
-  var postInfo = 'POSTS (' + DB.posts.length + ' total este mes)';
-  var assetInfo = 'ASSETS (' + DB.assets.length + ' total)';
-  return 'CONTEXTO OPS HUB:\n' + crmInfo + '\n' + taskInfo + '\n' + postInfo + '\n' + assetInfo;
-}
-
-function appendMsg(text, role) {
-  var msgs = document.getElementById('agent-messages');
-  var div = document.createElement('div');
-  div.className = 'msg msg-' + role;
-  div.innerHTML = text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
-  msgs.appendChild(div);
-  msgs.scrollTop = msgs.scrollHeight;
-}
-
-function showTyping() {
-  var msgs = document.getElementById('agent-messages');
-  var t = document.createElement('div');
-  t.id='typing-indicator'; t.className='msg msg-agent';
-  t.innerHTML='<div class="typing"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
-  msgs.appendChild(t); msgs.scrollTop=msgs.scrollHeight;
-}
-
-function hideTyping() {
-  var t = document.getElementById('typing-indicator');
-  if(t) t.remove();
 }
 
 // ============================
@@ -1209,6 +1101,42 @@ function changeUser() {
 // WEEKLY GUIDE
 // ============================
 var WEEKLY_GUIDE = {
+  'Mario': {
+    role: 'CEO · Heuristica',
+    color: '#E8C615',
+    days: {
+      'Lunes': [
+        '📊 Revisar el reporte semanal de marketing que presenta Axel (métricas, leads, avance de tareas)',
+        '🎯 Validar que los objetivos comerciales del mes siguen alineados con la estrategia de posicionamiento',
+        '💡 Identificar oportunidades de alianzas estratégicas o prospectos de alto valor en el CRM',
+        '📣 Revisar el tono y mensajes clave de la marca en las publicaciones de la semana pasada'
+      ],
+      'Martes': [
+        '🤝 Disponibilidad para reunión con prospectos calificados que requieran validación del CEO',
+        '📋 Revisar propuestas comerciales en etapa avanzada (Propuesta / Negociación) en el CRM',
+        '🌐 Monitorear presencia de Heuristica en LinkedIn — comentar o compartir contenido estratégico',
+        '📰 Leer al menos 1 artículo sobre tendencias de electromovilidad en LATAM para mantener visión sectorial'
+      ],
+      'Miércoles': [
+        '🔍 Revisar métricas mid-week si hay campaña activa importante',
+        '🏗️ Validar brief o propuesta de contenido institucional antes de su producción',
+        '📞 Llamada estratégica con socio, aliado o prospecto clave si está agendada',
+        '💬 Dar retroalimentación al Director de Marketing sobre prioridades de la segunda mitad de la semana'
+      ],
+      'Jueves': [
+        '📈 Revisar el pipeline de CRM: ¿hay oportunidades estancadas que requieran su intervención?',
+        '🎙️ Participar en la creación de contenido de autoridad (testimonial, opinión experta, video corto) si aplica',
+        '🤝 Networking estratégico: identificar eventos, foros o grupos donde Heuristica deba estar presente',
+        '✅ Validar decisiones de contenido o campaña que requieran aprobación del CEO'
+      ],
+      'Viernes': [
+        '📊 Recibir y revisar el reporte semanal completo del equipo de marketing',
+        '🌟 Reconocer públicamente (o internamente) un logro del equipo de la semana',
+        '🔭 Reflexión estratégica: ¿el posicionamiento de la semana comunica correctamente la propuesta de valor de Heuristica?',
+        '📅 Alinear con Axel las prioridades de la siguiente semana desde la visión del negocio'
+      ]
+    }
+  },
   'Axel': {
     role: 'Director de Marketing',
     color: '#E8C615',
