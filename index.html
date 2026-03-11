@@ -263,6 +263,8 @@ textarea{resize:vertical;min-height:80px}
       <div class="role-btn" onclick="selectRole(this,'Dylan','Becario')"><div class="role-name">Dylan</div><div class="role-title">Becario</div></div>
       <div class="role-btn" onclick="selectRole(this,'MelissaA','Diseño Visual')"><div class="role-name">Melissa A.</div><div class="role-title">Diseño Visual</div></div>
       <div class="role-btn" onclick="selectRole(this,'Jorge','Becario · Sistemas')"><div class="role-name">Jorge A.</div><div class="role-title">Becario · Sistemas</div></div>
+      <div class="role-btn" style="border-color:rgba(190,24,93,0.5);background:rgba(190,24,93,0.06)" onclick="selectRole(this,'Ivonne','Ejecutiva de Ventas')"><div class="role-name" style="color:#be185d">💼 Ivonne C.</div><div class="role-title">Ejecutiva de Ventas</div></div>
+      <div class="role-btn" style="border-color:rgba(157,23,77,0.5);background:rgba(157,23,77,0.06)" onclick="selectRole(this,'AleS','Ejecutiva de Ventas')"><div class="role-name" style="color:#9d174d">💼 Ale S.</div><div class="role-title">Ejecutiva de Ventas</div></div>
     </div>
     <button class="btn btn-primary" onclick="enterApp()" id="login-btn" disabled>Entrar al Hub</button>
     <button class="btn btn-secondary" style="margin-top:8px" onclick="reconfig()">⚙️ Reconfigurar backend</button>
@@ -310,7 +312,7 @@ textarea{resize:vertical;min-height:80px}
           </select>
           <select class="setup-input filter-select" id="crm-filter-owner" onchange="renderCRM()">
             <option value="">Todos</option>
-            <option>Mario</option><option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa G.</option><option>Melissa A.</option><option>Dylan</option><option>Jorge</option>
+            <option>Mario</option><option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa G.</option><option>Melissa A.</option><option>Dylan</option><option>Jorge</option><option>Ivonne C.</option><option>Ale S.</option>
           </select>
         </div>
         <div id="crm-pipeline"></div>
@@ -372,7 +374,7 @@ textarea{resize:vertical;min-height:80px}
           <div class="actions">
             <select class="setup-input filter-select" id="task-filter-assignee" onchange="renderTasks()">
               <option value="">Todos</option>
-              <option>Mario</option><option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa G.</option><option>Melissa A.</option><option>Dylan</option><option>Jorge</option>
+              <option>Mario</option><option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa G.</option><option>Melissa A.</option><option>Dylan</option><option>Jorge</option><option>Ivonne C.</option><option>Ale S.</option>
             </select>
             <button class="btn btn-primary btn-sm" onclick="openModal('task-modal')">+ Nueva tarea</button>
           </div>
@@ -389,7 +391,7 @@ textarea{resize:vertical;min-height:80px}
           <div class="actions">
             <select class="setup-input filter-select" id="guide-role-filter" onchange="renderGuide()">
               <option value="">Todos los roles</option>
-              <option>Mario</option><option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa G.</option><option>Melissa A.</option><option>Dylan</option><option>Jorge</option>
+              <option>Mario</option><option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa G.</option><option>Melissa A.</option><option>Dylan</option><option>Jorge</option><option>Ivonne C.</option><option>Ale S.</option>
             </select>
           </div>
         </div>
@@ -427,7 +429,7 @@ textarea{resize:vertical;min-height:80px}
         <select id="crm-stage"><option>Prospecto</option><option>Contactado</option><option>Interesado</option><option>Propuesta</option><option>Negociación</option><option>Cerrado ✓</option><option>Descartado</option></select>
       </div>
       <div class="form-group"><label>Responsable</label>
-        <select id="crm-owner"><option>Mario</option><option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa G.</option><option>Melissa A.</option><option>Dylan</option><option>Jorge</option></select>
+        <select id="crm-owner"><option>Mario</option><option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa G.</option><option>Melissa A.</option><option>Dylan</option><option>Jorge</option><option>Ivonne C.</option><option>Ale S.</option></select>
       </div>
       <div class="form-group"><label>🔥 Oportunidad de venta</label>
         <select id="crm-salesflag"><option value="0">No</option><option value="1">Sí — marcar como hot lead</option></select>
@@ -485,7 +487,7 @@ textarea{resize:vertical;min-height:80px}
         <select id="post-status"><option>Borrador</option><option>En revisión</option><option>Programado</option><option>Publicado</option></select>
       </div>
       <div class="form-group"><label>Autor</label>
-        <select id="post-author"><option>Mario</option><option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa G.</option><option>Melissa A.</option><option>Dylan</option><option>Jorge</option></select>
+        <select id="post-author"><option>Mario</option><option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa G.</option><option>Melissa A.</option><option>Dylan</option><option>Jorge</option><option>Ivonne C.</option><option>Ale S.</option></select>
       </div>
       <div class="form-group full"><label>Copy / Texto del post</label><textarea id="post-copy" placeholder="Escribe el texto del post aquí..." style="min-height:100px"></textarea></div>
       <div class="form-group full"><label>🔗 Link del archivo en Drive <span style="font-size:11px;color:var(--text2);font-weight:400">(opcional — pega el link del video/imagen en Drive)</span></label><input id="post-drive-link" placeholder="https://drive.google.com/file/d/..."></div>
@@ -504,7 +506,7 @@ textarea{resize:vertical;min-height:80px}
     <div class="form-grid">
       <div class="form-group full"><label>Tarea *</label><input id="task-text" placeholder="Descripción de la tarea"></div>
       <div class="form-group"><label>Asignado a</label>
-        <select id="task-assignee"><option>Mario</option><option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa G.</option><option>Melissa A.</option><option>Dylan</option><option>Jorge</option></select>
+        <select id="task-assignee"><option>Mario</option><option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa G.</option><option>Melissa A.</option><option>Dylan</option><option>Jorge</option><option>Ivonne C.</option><option>Ale S.</option></select>
       </div>
       <div class="form-group"><label>Prioridad</label>
         <select id="task-priority"><option>Normal</option><option>Alta</option><option>Urgente</option><option>Baja</option></select>
@@ -831,7 +833,7 @@ function renderAssets() {
   var data = DB.assets.filter(function(r){
     return (!search || (r.name||'').toLowerCase().indexOf(search)>=0)
       && (!type || r.type===type) && (!canal || r.canal===canal);
-  }).slice().reverse()
+  }).slice().reverse();
   var grid = document.getElementById('assets-grid');
   if (data.length === 0) { grid.innerHTML = emptyState('📦','Sin assets','Agrega tu primer asset con el botón de arriba.'); return; }
   grid.innerHTML = data.map(function(r) {
@@ -1469,6 +1471,78 @@ var WEEKLY_GUIDE = {
         '📊 Actualizar estatus en el OPS HUB con lo completado',
         '📝 Escribir un resumen breve de lo que hiciste esta semana (3-4 puntos)',
         '🙋 Preguntarle a Axel si hay algo en lo que puedas apoyar la semana siguiente'
+      ]
+    }
+  },
+  'Ivonne': {
+    role: 'Ejecutiva de Ventas',
+    color: '#be185d',
+    days: {
+      'Lunes': [
+        '📋 Revisar el CRM en el OPS HUB — ¿hay leads nuevos que Dylan o Jorge registraron?',
+        '📞 Planear los 10 prospectos a contactar esta semana: priorizar etapa INTERÉS',
+        '📝 Preparar mensajes personalizados para los primeros 5 contactos',
+        '🗓️ Revisar si hay seguimientos pendientes de la semana anterior'
+      ],
+      'Martes': [
+        '📤 Enviar los primeros 5 mensajes de acercamiento personalizados',
+        '📞 Llamar a prospectos que ya respondieron y están en etapa INTERÉS o PROPUESTA',
+        '💾 Actualizar el CRM con el resultado de cada contacto realizado',
+        '📋 Revisar si algún lead necesita que se le envíe la presentación de Arturo'
+      ],
+      'Miércoles': [
+        '🔄 Seguimiento a mensajes del lunes que no respondieron',
+        '📤 Enviar los 5 mensajes restantes de la semana',
+        '🤝 Agendar reuniones o llamadas con quienes mostraron interés',
+        '💬 Coordinar con Ale S. para no duplicar prospectos — revisar CRM juntas'
+      ],
+      'Jueves': [
+        '📅 Reuniones o llamadas con prospectos calificados',
+        '📑 Preparar o enviar propuestas formales a quienes avanzaron en el pipeline',
+        '📊 Documentar objeciones y respuestas en notas del CRM',
+        '🔗 Coordinar con Axel o Mario si algún lead necesita aprobación para cerrar'
+      ],
+      'Viernes': [
+        '✅ Actualizar todos los estatus del pipeline en el CRM',
+        '📊 Reporte semanal a Axel: contactados / respondieron / avanzaron / cerrados',
+        '🗓️ Planear los 10 prospectos para la semana siguiente',
+        '💡 Anotar 1 aprendizaje: ¿qué objeción encontraste más? ¿Qué funcionó?'
+      ]
+    }
+  },
+  'AleS': {
+    role: 'Ejecutiva de Ventas',
+    color: '#9d174d',
+    days: {
+      'Lunes': [
+        '🎯 Revisar el CRM — identificar prospectos sin movimiento en 5+ días para reactivar',
+        '🔄 Buscar leads en etapa PROSPECTO que necesiten seguimiento',
+        '💬 Coordinar con Ivonne para dividir el pipeline y no duplicar esfuerzos',
+        '📝 Preparar argumentos personalizados para los contactos de la semana'
+      ],
+      'Martes': [
+        '📤 Enviar mensajes de prospección a los leads seleccionados del CRM',
+        '🔄 Reactivar prospectos que no respondieron en semanas anteriores',
+        '💾 Actualizar notas en el CRM con cada acción realizada',
+        '📋 Revisar si Alejandro generó nuevos prospectos en su investigación de mercado'
+      ],
+      'Miércoles': [
+        '📞 Seguimiento a mensajes sin respuesta del lunes',
+        '🤝 Llamadas con prospectos que respondieron positivamente',
+        '💬 Coordinar con Ivonne: ¿quién atiende qué lead esta semana?',
+        '📊 Documentar el estatus actualizado de tu pipeline en el CRM'
+      ],
+      'Jueves': [
+        '📅 Reuniones o llamadas con prospectos calificados',
+        '📑 Apoyar en preparación de propuestas si Ivonne tiene carga alta',
+        '📈 Revisar qué segmento está respondiendo mejor — anotarlo para Alejandro',
+        '🔗 Escalar a Axel los leads que ya necesitan propuesta formal'
+      ],
+      'Viernes': [
+        '✅ Cerrar y actualizar todas las acciones de la semana en el CRM',
+        '📊 Reporte semanal a Axel: pipeline personal, contactados, avances',
+        '🗓️ Definir los 10 prospectos a trabajar la próxima semana',
+        '💡 Anotar 1 patrón del mercado que hayas observado esta semana'
       ]
     }
   }
