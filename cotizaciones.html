@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HEURISTICA · Plataforma de Cotizaciones</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:   #031244;
+  --navy2:  #0A1F5C;
+  --green:  #36CF03;
+  --yellow: #E8C615;
+  --white:  #FFFFFF;
+  --gray:   #9d9d9c;
+  --card:   #0D1E6B;
+  --dark:   #020C2E;
+  --red:    #EF4444;
+  --orange: #F97316;
+  --pink:   #BE185D;
+  --border: rgba(54,207,3,0.18);
+  --glass:  rgba(13,30,107,0.7);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--dark);
+  color: var(--white);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ─── BG ─── */
+body::before {
+  content:'';
+  position:fixed; inset:0; z-index:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 10% 10%, rgba(54,207,3,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 90% 80%, rgba(232,198,21,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 40% at 50% 50%, rgba(10,31,92,0.8) 0%, transparent 100%);
+  pointer-events:none;
+}
+
+/* ─── TOPBAR ─── */
+#topbar {
+  position:sticky; top:0; z-index:100;
+  display:flex; align-items:center; justify-content:space-between;
+  padding: 0 2rem;
+  height: 60px;
+  background: rgba(2,12,46,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.tb-logo {
+  display:flex; align-items:center; gap:.75rem;
+}
+.tb-logo .star {
+  width:22px; height:22px;
+  background: var(--yellow);
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+}
+.tb-logo span {
+  font-family: 'Space Mono', monospace;
+  font-size: .85rem;
+  letter-spacing: .12em;
+  color: var(--white);
+}
+.tb-logo span b { color: var(--green); }
+.tb-nav { display:flex; gap:.25rem; }
+.tb-nav button {
+  background: transparent;
+  border: none;
+  color: var(--gray);
+  padding: .4rem .9rem;
+  border-radius: 6px;
+  font-size: .82rem;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: all .2s;
+}
+.tb-nav button.active, .tb-nav button:hover {
+  background: var(--border);
+  color: var(--green);
+}
+.tb-actions { display:flex; gap:.5rem; align-items:center; }
+#btn-nueva {
+  background: var(--green);
+  color: var(--navy);
+  border: none;
+  padding: .45rem 1.1rem;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: .82rem;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: all .2s;
+  letter-spacing: .04em;
+}
+#btn-nueva:hover { background: #44ff00; transform: translateY(-1px); }
+#user-tag {
+  font-size:.78rem; color:var(--gray);
+  padding:.35rem .7rem;
+  background: var(--glass);
+  border-radius:6px;
+  border:1px solid var(--border);
+}
+
+/* ─── LAYOUT ─── */
+#app { position:relative; z-index:1; }
+.page { display:none; }
+.page.active { display:block; }
+
+/* ─── DASHBOARD ─── */
+#page-dashboard { padding: 2rem; }
+.dash-hero {
+  display:grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+.kpi-card {
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.25rem 1.5rem;
+  backdrop-filter: blur(8px);
+  position:relative; overflow:hidden;
+  transition: transform .2s, border-color .2s;
+}
+.kpi-card:hover { transform:translateY(-2px); border-color:rgba(54,207,3,0.4); }
+.kpi-card::before {
+  content:''; position:absolute;
+  top:0; left:0; width:3px; height:100%;
+  background: var(--kc, var(--green));
+}
+.kpi-label { font-size:.72rem; color:var(--gray); letter-spacing:.08em; text-transform:uppercase; margin-bottom:.5rem; }
+.kpi-val { font-size:2rem; font-weight:700; font-family:'Space Mono',monospace; color:var(--kc,var(--green)); }
+.kpi-sub { font-size:.72rem; color:var(--gray); margin-top:.25rem; }
+
+/* pipeline row */
+.pipeline-row {
+  display:grid;
+  grid-template-columns: repeat(5,1fr);
+  gap:.75rem;
+  margin-bottom:2rem;
+}
+.pipeline-col {
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius:12px;
+  overflow:hidden;
+}
+.pipeline-col-head {
+  padding:.6rem .8rem;
+  font-size:.72rem;
+  font-weight:700;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  border-bottom: 1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+}
+.pipeline-col-head .dot { width:8px;height:8px;border-radius:50%;background:var(--stage-c,#fff); }
+.pipeline-col-head .ct {
+  font-size:.78rem; font-family:'Space Mono',monospace;
+  background: var(--glass); padding:.1rem .4rem; border-radius:4px;
+  color:var(--stage-c);
+}
+.pipeline-body { padding:.5rem; min-height:80px; }
+.p-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius:8px; padding:.55rem .7rem; margin-bottom:.4rem;
+  cursor:pointer; transition:all .15s;
+  font-size:.78rem;
+}
+.p-card:hover { border-color:var(--green); background:rgba(54,207,3,0.05); }
+.p-card .p-cliente { font-weight:600; color:var(--white); }
+.p-card .p-meta { color:var(--gray); font-size:.7rem; margin-top:.15rem; }
+
+/* tabla quotes */
+.section-header {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:1rem;
+}
+.section-title { font-family:'Space Mono',monospace; font-size:1rem; color:var(--green); letter-spacing:.06em; }
+.filter-row { display:flex; gap:.5rem; flex-wrap:wrap; margin-bottom:1rem; }
+.filter-select, .filter-input {
+  background: var(--glass);
+  border: 1px solid var(--border);
+  color: var(--white);
+  padding: .4rem .75rem;
+  border-radius: 8px;
+  font-size: .8rem;
+  font-family: 'DM Sans', sans-serif;
+  outline: none;
+  cursor: pointer;
+}
+.filter-select option { background: var(--navy2); }
+.filter-input::placeholder { color: var(--gray); }
+.filter-input:focus { border-color: var(--green); }
+
+.quotes-table { width:100%; border-collapse:separate; border-spacing:0 4px; }
+.quotes-table th {
+  text-align:left; font-size:.7rem; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--gray); padding:.5rem .8rem;
+  border-bottom: 1px solid var(--border);
+}
+.quotes-table tr.qrow {
+  cursor:pointer;
+  transition:all .15s;
+}
+.quotes-table tr.qrow td {
+  padding:.65rem .8rem;
+  background: var(--glass);
+  font-size:.82rem;
+  border-top: 1px solid rgba(255,255,255,0.04);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.quotes-table tr.qrow td:first-child { border-radius:10px 0 0 10px; }
+.quotes-table tr.qrow td:last-child { border-radius:0 10px 10px 0; }
+.quotes-table tr.qrow:hover td { background: rgba(54,207,3,0.06); border-color:rgba(54,207,3,0.2); }
+
+/* badges */
+.badge {
+  display:inline-block; padding:.18rem .6rem; border-radius:20px;
+  font-size:.68rem; font-weight:700; letter-spacing:.04em;
+  text-transform:uppercase;
+}
+.b-pre     { background:rgba(232,198,21,0.15); color:var(--yellow); }
+.b-formal  { background:rgba(54,207,3,0.15); color:var(--green); }
+.b-negoc   { background:rgba(249,115,22,0.15); color:var(--orange); }
+.b-cerrado { background:rgba(16,185,129,0.15); color:#10B981; }
+.b-perdido { background:rgba(239,68,68,0.15); color:var(--red); }
+.b-pend    { background:rgba(157,157,156,0.15); color:var(--gray); }
+
+/* ─── MODAL ─── */
+.modal-overlay {
+  position:fixed; inset:0; z-index:200;
+  background: rgba(2,12,46,0.85);
+  backdrop-filter: blur(6px);
+  display:none; align-items:flex-start; justify-content:center;
+  padding: 2rem 1rem;
+  overflow-y:auto;
+}
+.modal-overlay.open { display:flex; }
+.modal {
+  background: var(--navy2);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  width: 100%; max-width: 820px;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+  overflow:hidden;
+  animation: modalIn .25s ease;
+}
+@keyframes modalIn {
+  from { opacity:0; transform:translateY(16px) scale(.98); }
+  to   { opacity:1; transform:translateY(0) scale(1); }
+}
+.modal-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+  background: var(--glass);
+}
+.modal-title { font-family:'Space Mono',monospace; font-size:.95rem; color:var(--green); }
+.modal-close {
+  background:transparent; border:none; color:var(--gray);
+  font-size:1.2rem; cursor:pointer; padding:.2rem .5rem;
+  border-radius:6px; transition:all .15s;
+}
+.modal-close:hover { background:rgba(239,68,68,0.15); color:var(--red); }
+.modal-body { padding: 1.5rem; }
+
+/* FORM */
+.form-section {
+  margin-bottom:1.5rem;
+  padding-bottom:1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.form-section:last-child { border-bottom:none; margin-bottom:0; }
+.form-section-title {
+  font-size:.7rem; font-weight:700; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--yellow);
+  margin-bottom:1rem;
+  display:flex; align-items:center; gap:.5rem;
+}
+.form-section-title::before {
+  content:''; display:block; width:16px; height:2px; background:var(--yellow);
+}
+.form-grid { display:grid; gap:.85rem; }
+.fg-2 { grid-template-columns:1fr 1fr; }
+.fg-3 { grid-template-columns:1fr 1fr 1fr; }
+.fg-4 { grid-template-columns:1fr 1fr 1fr 1fr; }
+.form-group { display:flex; flex-direction:column; gap:.35rem; }
+.form-label {
+  font-size:.72rem; letter-spacing:.06em; text-transform:uppercase;
+  color:var(--gray); font-weight:600;
+}
+.form-input, .form-select, .form-textarea {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  color: var(--white);
+  padding: .55rem .75rem;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .85rem;
+  outline: none;
+  transition: border-color .2s;
+  width:100%;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  border-color: var(--green);
+  background: rgba(54,207,3,0.04);
+}
+.form-select option { background: var(--navy2); }
+.form-textarea { resize:vertical; min-height:70px; }
+.form-input[type=number] { -moz-appearance:textfield; }
+.form-hint { font-size:.68rem; color:var(--gray); }
+
+.modal-footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+  gap:.75rem; background:var(--glass);
+}
+.btn-ghost {
+  background:transparent; border:1px solid var(--border);
+  color:var(--gray); padding:.5rem 1.1rem; border-radius:8px;
+  font-size:.82rem; cursor:pointer; font-family:'DM Sans',sans-serif;
+  transition:all .15s;
+}
+.btn-ghost:hover { border-color:var(--gray); color:var(--white); }
+.btn-primary {
+  background: var(--green); color: var(--navy);
+  border:none; padding:.5rem 1.4rem; border-radius:8px;
+  font-size:.85rem; font-weight:700; cursor:pointer;
+  font-family:'DM Sans',sans-serif; transition:all .2s;
+}
+.btn-primary:hover { background:#44ff00; transform:translateY(-1px); }
+.btn-danger {
+  background:rgba(239,68,68,0.12); color:var(--red);
+  border:1px solid rgba(239,68,68,0.3);
+  padding:.5rem 1.1rem; border-radius:8px;
+  font-size:.82rem; cursor:pointer; font-family:'DM Sans',sans-serif;
+  transition:all .15s;
+}
+.btn-danger:hover { background:rgba(239,68,68,0.2); }
+
+/* ─── DETALLE ─── */
+#page-detalle { padding:2rem; }
+.det-back {
+  display:inline-flex; align-items:center; gap:.4rem;
+  color:var(--gray); font-size:.82rem; cursor:pointer;
+  margin-bottom:1.5rem; transition:color .15s;
+}
+.det-back:hover { color:var(--green); }
+.det-header {
+  display:flex; align-items:flex-start; justify-content:space-between;
+  margin-bottom:1.5rem; gap:1rem;
+}
+.det-title-block .det-num { font-family:'Space Mono',monospace; color:var(--gray); font-size:.8rem; }
+.det-title-block h1 { font-size:1.6rem; font-weight:700; margin:.25rem 0; }
+.det-title-block .det-date { color:var(--gray); font-size:.82rem; }
+.det-actions { display:flex; gap:.5rem; flex-wrap:wrap; }
+
+.det-grid {
+  display:grid; grid-template-columns:2fr 1fr; gap:1.5rem; margin-bottom:1.5rem;
+}
+.det-card {
+  background:var(--glass); border:1px solid var(--border);
+  border-radius:14px; padding:1.25rem 1.5rem;
+}
+.det-card-title {
+  font-size:.7rem; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--yellow); font-weight:700; margin-bottom:1rem;
+  display:flex; align-items:center; gap:.5rem;
+}
+.det-card-title::before { content:''; display:block; width:12px; height:2px; background:var(--yellow); }
+.det-row { display:flex; justify-content:space-between; align-items:flex-start; padding:.45rem 0; border-bottom:1px solid rgba(255,255,255,0.05); }
+.det-row:last-child { border-bottom:none; }
+.det-row-label { color:var(--gray); font-size:.78rem; }
+.det-row-val { font-size:.82rem; font-weight:500; text-align:right; max-width:55%; }
+
+/* timeline */
+.timeline { list-style:none; padding:0; }
+.tl-item { display:flex; gap:.75rem; padding:.5rem 0; position:relative; }
+.tl-item::before { content:''; position:absolute; left:8px; top:28px; bottom:-8px; width:1px; background:var(--border); }
+.tl-item:last-child::before { display:none; }
+.tl-dot { width:18px; height:18px; border-radius:50%; background:var(--card); border:2px solid var(--green); flex-shrink:0; margin-top:2px; }
+.tl-dot.warn { border-color:var(--yellow); }
+.tl-dot.ok { border-color:#10B981; background:#10B981; }
+.tl-content .tl-title { font-size:.82rem; font-weight:600; }
+.tl-content .tl-meta { font-size:.72rem; color:var(--gray); margin-top:.15rem; }
+
+/* ─── LOADING / STATES ─── */
+.empty-state {
+  text-align:center; padding:3rem 1rem; color:var(--gray);
+}
+.empty-state .es-icon { font-size:2.5rem; margin-bottom:.75rem; }
+.empty-state .es-msg { font-size:.9rem; }
+
+.toast {
+  position:fixed; bottom:1.5rem; right:1.5rem; z-index:500;
+  background:var(--green); color:var(--navy);
+  padding:.6rem 1.2rem; border-radius:10px; font-weight:700;
+  font-size:.82rem; animation: toastIn .3s ease;
+  max-width:280px;
+}
+.toast.err { background:var(--red); color:var(--white); }
+@keyframes toastIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+/* scroll */
+::-webkit-scrollbar { width:5px; height:5px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:var(--border); border-radius:4px; }
+
+/* ─── DOCS PAGE ─── */
+#page-docs { padding:2rem; }
+.docs-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:1rem; }
+.doc-card {
+  background:var(--glass); border:1px solid var(--border);
+  border-radius:12px; padding:1rem 1.2rem; transition:all .2s; cursor:pointer;
+}
+.doc-card:hover { border-color:var(--green); transform:translateY(-2px); }
+.doc-card .dc-type { font-size:.65rem; letter-spacing:.1em; text-transform:uppercase; color:var(--gray); margin-bottom:.5rem; }
+.doc-card .dc-name { font-size:.88rem; font-weight:600; margin-bottom:.25rem; }
+.doc-card .dc-meta { font-size:.72rem; color:var(--gray); }
+.doc-card .dc-status { margin-top:.5rem; }
+
+/* responsive basics */
+@media(max-width:768px){
+  .dash-hero { grid-template-columns:1fr 1fr; }
+  .pipeline-row { grid-template-columns:1fr; }
+  .fg-2,.fg-3,.fg-4 { grid-template-columns:1fr; }
+  .det-grid { grid-template-columns:1fr; }
+  #topbar { padding:0 1rem; }
+  #page-dashboard,#page-detalle,#page-docs { padding:1rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div id="topbar">
+  <div class="tb-logo">
+    <div class="star"></div>
+    <span>HEURISTICA · <b>COTIZACIONES</b></span>
+  </div>
+  <nav class="tb-nav">
+    <button class="active" onclick="nav('dashboard')">Dashboard</button>
+    <button onclick="nav('cotizaciones')">Cotizaciones</button>
+    <button onclick="nav('documentos')">Documentos</button>
+  </nav>
+  <div class="tb-actions">
+    <div id="user-tag">👤 <span id="current-user-label">—</span></div>
+    <button id="btn-nueva" onclick="openModal()">+ Nueva cotización</button>
+  </div>
+</div>
+
+<div id="app">
+
+  <!-- ── PAGE: DASHBOARD ── -->
+  <div class="page active" id="page-dashboard">
+
+    <div class="dash-hero">
+      <div class="kpi-card" style="--kc:var(--green)">
+        <div class="kpi-label">Total cotizaciones</div>
+        <div class="kpi-val" id="kpi-total">0</div>
+        <div class="kpi-sub">Todas las versiones</div>
+      </div>
+      <div class="kpi-card" style="--kc:var(--yellow)">
+        <div class="kpi-label">Pre-cotizaciones</div>
+        <div class="kpi-val" id="kpi-pre">0</div>
+        <div class="kpi-sub">En exploración</div>
+      </div>
+      <div class="kpi-card" style="--kc:var(--orange)">
+        <div class="kpi-label">En negociación</div>
+        <div class="kpi-val" id="kpi-negoc">0</div>
+        <div class="kpi-sub">Activas</div>
+      </div>
+      <div class="kpi-card" style="--kc:#10B981">
+        <div class="kpi-label">Cerradas</div>
+        <div class="kpi-val" id="kpi-cerrado">0</div>
+        <div class="kpi-sub">Ganadas</div>
+      </div>
+    </div>
+
+    <!-- Pipeline Kanban -->
+    <div class="section-header">
+      <span class="section-title">// PIPELINE</span>
+    </div>
+    <div class="pipeline-row" id="pipeline-kanban"></div>
+
+    <!-- Lista reciente -->
+    <div class="section-header">
+      <span class="section-title">// ACTIVIDAD RECIENTE</span>
+    </div>
+    <table class="quotes-table" id="table-reciente">
+      <thead>
+        <tr>
+          <th>ID</th><th>Cliente</th><th>Proyecto</th>
+          <th>Ejecutiva</th><th>Estatus</th><th>Unidades</th><th>Fecha</th>
+        </tr>
+      </thead>
+      <tbody id="tbody-reciente"></tbody>
+    </table>
+
+  </div><!-- /dashboard -->
+
+  <!-- ── PAGE: COTIZACIONES ── -->
+  <div class="page" id="page-cotizaciones">
+    <div style="padding:2rem">
+      <div class="section-header">
+        <span class="section-title">// TODAS LAS COTIZACIONES</span>
+      </div>
+      <div class="filter-row">
+        <select class="filter-select" id="f-ejecutiva" onchange="renderCotizaciones()">
+          <option value="">Todas las ejecutivas</option>
+          <option>Ivonne C.</option><option>Ale S.</option><option>Axel</option><option>Mario</option>
+        </select>
+        <select class="filter-select" id="f-estatus" onchange="renderCotizaciones()">
+          <option value="">Todos los estatus</option>
+          <option value="Pre-cotización">Pre-cotización</option>
+          <option value="Cotización formal">Cotización formal</option>
+          <option value="Negociación">Negociación</option>
+          <option value="Cerrado-Ganado">Cerrado-Ganado</option>
+          <option value="Cerrado-Perdido">Cerrado-Perdido</option>
+        </select>
+        <select class="filter-select" id="f-tipo" onchange="renderCotizaciones()">
+          <option value="">Todos los tipos</option>
+          <option>Conversión de flota</option>
+          <option>Infraestructura de recarga</option>
+          <option>Servicio técnico</option>
+          <option>Solución integral</option>
+        </select>
+        <input class="filter-input" id="f-buscar" placeholder="🔍 Buscar cliente o proyecto..." oninput="renderCotizaciones()">
+      </div>
+      <table class="quotes-table" id="table-all">
+        <thead>
+          <tr>
+            <th>ID</th><th>Cliente</th><th>Proyecto</th>
+            <th>Tipo</th><th>Ejecutiva</th><th>Estatus</th>
+            <th>Unidades</th><th>Versión</th><th>Fecha</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-all"></tbody>
+      </table>
+    </div>
+  </div><!-- /cotizaciones -->
+
+  <!-- ── PAGE: DOCUMENTOS ── -->
+  <div class="page" id="page-docs">
+    <div class="section-header">
+      <span class="section-title">// DOCUMENTOS Y CONTRATOS</span>
+      <span style="font-size:.78rem;color:var(--gray)">Adjuntos vinculados a cotizaciones activas</span>
+    </div>
+    <div class="docs-grid" id="docs-grid"></div>
+  </div>
+
+  <!-- ── PAGE: DETALLE ── -->
+  <div class="page" id="page-detalle">
+    <div class="det-back" onclick="nav('cotizaciones')">← Volver a cotizaciones</div>
+    <div id="detalle-content"></div>
+  </div>
+
+</div><!-- /app -->
+
+<!-- ─── MODAL NUEVA / EDITAR COTIZACIÓN ─── -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-title-text">// NUEVA COTIZACIÓN</span>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <!-- SECCIÓN 1: DATOS DEL PROYECTO -->
+      <div class="form-section">
+        <div class="form-section-title">Datos del proyecto</div>
+        <div class="form-grid fg-2">
+          <div class="form-group">
+            <label class="form-label">Nombre del cliente *</label>
+            <input class="form-input" id="f-cliente" placeholder="Ej. Grupo Empresarial XYZ">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Atención a (contacto)</label>
+            <input class="form-input" id="f-contacto" placeholder="Nombre del contacto">
+          </div>
+        </div>
+        <div class="form-grid fg-3" style="margin-top:.85rem">
+          <div class="form-group">
+            <label class="form-label">Nombre del proyecto *</label>
+            <input class="form-input" id="f-proyecto" placeholder="Descripción corta">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Versión</label>
+            <input class="form-input" id="f-version" placeholder="v1.0" value="v1.0">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Fecha</label>
+            <input class="form-input" type="date" id="f-fecha">
+          </div>
+        </div>
+        <div class="form-grid fg-3" style="margin-top:.85rem">
+          <div class="form-group">
+            <label class="form-label">Ejecutiva responsable</label>
+            <select class="form-select" id="f-exec">
+              <option>Ivonne C.</option><option>Ale S.</option>
+              <option>Axel</option><option>Mario</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tipo de servicio</label>
+            <select class="form-select" id="f-tipo-serv">
+              <option>Conversión de flota</option>
+              <option>Infraestructura de recarga</option>
+              <option>Servicio técnico</option>
+              <option>Solución integral</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Estatus</label>
+            <select class="form-select" id="f-status">
+              <option>Pre-cotización</option>
+              <option>Cotización formal</option>
+              <option>Negociación</option>
+              <option>Cerrado-Ganado</option>
+              <option>Cerrado-Perdido</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECCIÓN 2: FLOTA -->
+      <div class="form-section">
+        <div class="form-section-title">Base del cálculo de flota</div>
+        <div class="form-grid fg-4">
+          <div class="form-group">
+            <label class="form-label">Núm. unidades</label>
+            <input class="form-input" type="number" id="f-unidades" placeholder="0">
+            <span class="form-hint">Vehículos en la flota</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tipo de unidad</label>
+            <select class="form-select" id="f-tipo-unidad">
+              <option value="">Seleccionar</option>
+              <option>Urbana</option><option>Mercancía</option>
+              <option>Última milla</option><option>Ejecutivo</option>
+              <option>Mixta</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Peso bruto vehicular</label>
+            <input class="form-input" type="number" id="f-peso" placeholder="0" step="0.1">
+            <span class="form-hint">Toneladas</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label">KM diarios</label>
+            <input class="form-input" type="number" id="f-km" placeholder="0">
+            <span class="form-hint">Por vehículo</span>
+          </div>
+        </div>
+        <div class="form-grid fg-4" style="margin-top:.85rem">
+          <div class="form-group">
+            <label class="form-label">Precio combustible</label>
+            <input class="form-input" type="number" id="f-combustible" placeholder="0.00">
+            <span class="form-hint">$/litro</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Eficiencia actual</label>
+            <input class="form-input" type="number" id="f-eficiencia" placeholder="0.0" step="0.1">
+            <span class="form-hint">Km/litro</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Mant. mensual actual</label>
+            <input class="form-input" type="number" id="f-mant-mensual" placeholder="0">
+            <span class="form-hint">$/mes</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Días de uso mensual</label>
+            <input class="form-input" type="number" id="f-dias-uso" placeholder="0">
+            <span class="form-hint">Días/mes</span>
+          </div>
+        </div>
+        <div class="form-grid fg-2" style="margin-top:.85rem">
+          <div class="form-group">
+            <label class="form-label">Costo promedio mantenimiento</label>
+            <input class="form-input" type="number" id="f-costo-mant" placeholder="0">
+            <span class="form-hint">$/mes promedio</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Costo promedio reparaciones</label>
+            <input class="form-input" type="number" id="f-costo-rep" placeholder="0">
+            <span class="form-hint">$/año promedio</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECCIÓN 3: CENTROS DE CARGA -->
+      <div class="form-section">
+        <div class="form-section-title">Relación de centros de carga</div>
+        <div class="form-grid fg-3">
+          <div class="form-group">
+            <label class="form-label">Núm. de centros de carga</label>
+            <input class="form-input" type="number" id="f-num-cc" placeholder="0">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Unidades por centro</label>
+            <input class="form-input" type="number" id="f-unidades-cc" placeholder="0">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tipo de carga</label>
+            <select class="form-select" id="f-tipo-carga">
+              <option value="">Seleccionar</option>
+              <option>Nocturna</option><option>Diurna</option><option>Combinada</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-grid fg-2" style="margin-top:.85rem">
+          <div class="form-group">
+            <label class="form-label">Dirección(es) de centros de carga</label>
+            <textarea class="form-textarea" id="f-dir-cc" placeholder="Una dirección por línea"></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tiempo disponible para cargar</label>
+            <input class="form-input" id="f-tiempo-carga" placeholder="Ej. 8 horas nocturnas">
+          </div>
+        </div>
+      </div>
+
+      <!-- SECCIÓN 4: DOCUMENTOS Y NOTAS -->
+      <div class="form-section">
+        <div class="form-section-title">Documentos y seguimiento</div>
+        <div class="form-grid fg-2">
+          <div class="form-group">
+            <label class="form-label">Link cotización formal (Drive)</label>
+            <input class="form-input" id="f-link-cot" placeholder="https://drive.google.com/...">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Link contrato (si aplica)</label>
+            <input class="form-input" id="f-link-contrato" placeholder="https://drive.google.com/...">
+          </div>
+        </div>
+        <div class="form-grid fg-2" style="margin-top:.85rem">
+          <div class="form-group">
+            <label class="form-label">Link propuesta técnica</label>
+            <input class="form-input" id="f-link-propuesta" placeholder="https://drive.google.com/...">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Referente / resumen</label>
+            <input class="form-input" id="f-referente" placeholder="Referencia interna o campaña">
+          </div>
+        </div>
+        <div class="form-group" style="margin-top:.85rem">
+          <label class="form-label">Notas internas</label>
+          <textarea class="form-textarea" id="f-notas" placeholder="Contexto, objeciones, próximos pasos..."></textarea>
+        </div>
+      </div>
+
+    </div><!-- /modal-body -->
+    <div class="modal-footer">
+      <button class="btn-danger" id="btn-del-quote" style="display:none" onclick="deleteQuote()">Eliminar</button>
+      <div style="display:flex;gap:.5rem;margin-left:auto">
+        <button class="btn-ghost" onclick="closeModal()">Cancelar</button>
+        <button class="btn-primary" onclick="saveQuote()">💾 Guardar cotización</button>
+      </div>
+    </div>
+  </div>
+</div><!-- /modal -->
+
+<!-- ─── SELECT USUARIO ─── -->
+<div class="modal-overlay open" id="user-select-overlay" style="align-items:center">
+  <div class="modal" style="max-width:360px">
+    <div class="modal-header">
+      <span class="modal-title">// IDENTIFICATE</span>
+    </div>
+    <div class="modal-body">
+      <p style="color:var(--gray);font-size:.85rem;margin-bottom:1rem">¿Quién eres? Esto personaliza tu vista del pipeline.</p>
+      <div class="form-group">
+        <label class="form-label">Selecciona tu nombre</label>
+        <select class="form-select" id="user-sel">
+          <option value="">— Seleccionar —</option>
+          <option>Ivonne C.</option><option>Ale S.</option>
+          <option>Axel</option><option>Mario</option>
+          <option>Ver todo (Admin)</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-primary" style="margin-left:auto" onclick="setUser()">Entrar →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════
+// CONFIG — misma Apps Script URL del OPS HUB
+// ══════════════════════════════════════════════════════
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbyZTJTxadnOvSw0poY2vTYPkTgtVpk0nWdHFA_5_AgOuLF2M4hOABivEXRFaRFkUiEY/exec';
+const SHEET_NAME = 'quotes';
+
+// ──────────────────────────────────────────────────────
+var DB_QUOTES = [];
+var EDIT_ID   = null;
+var CURRENT_USER = '';
+
+// ── Estatus config ──
+const STAGE_CFG = {
+  'Pre-cotización':   { color:'#E8C615', cls:'b-pre',     order:0 },
+  'Cotización formal':{ color:'#36CF03', cls:'b-formal',  order:1 },
+  'Negociación':      { color:'#F97316', cls:'b-negoc',   order:2 },
+  'Cerrado-Ganado':   { color:'#10B981', cls:'b-cerrado', order:3 },
+  'Cerrado-Perdido':  { color:'#EF4444', cls:'b-perdido', order:4 },
+};
+
+function badge(text) {
+  const cfg = STAGE_CFG[text] || { cls:'b-pend' };
+  return `<span class="badge ${cfg.cls}">${text||'—'}</span>`;
+}
+
+// ══════════════════════════════════════════════════════
+// USER
+// ══════════════════════════════════════════════════════
+function setUser() {
+  const v = document.getElementById('user-sel').value;
+  if (!v) return toast('Selecciona tu nombre', true);
+  CURRENT_USER = v;
+  document.getElementById('current-user-label').textContent = v;
+  document.getElementById('user-select-overlay').classList.remove('open');
+  document.getElementById('f-exec').value = v !== 'Ver todo (Admin)' ? (v || 'Ivonne C.') : 'Ivonne C.';
+  loadQuotes();
+}
+
+// ══════════════════════════════════════════════════════
+// NAV
+// ══════════════════════════════════════════════════════
+function nav(page) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tb-nav button').forEach(b=>b.classList.remove('active'));
+  const map = {dashboard:'page-dashboard',cotizaciones:'page-cotizaciones',documentos:'page-docs',detalle:'page-detalle'};
+  document.getElementById(map[page]||'page-dashboard').classList.add('active');
+  const navBtns = document.querySelectorAll('.tb-nav button');
+  if(page==='dashboard') navBtns[0].classList.add('active');
+  if(page==='cotizaciones') navBtns[1].classList.add('active');
+  if(page==='documentos') navBtns[2].classList.add('active');
+  if(page!=='detalle') renderAll();
+}
+
+// ══════════════════════════════════════════════════════
+// DATA LAYER — Google Sheets via Apps Script
+// ══════════════════════════════════════════════════════
+async function gasReq(action, payload={}) {
+  try {
+    const url = GAS_URL + '?sheet=' + SHEET_NAME + '&action=' + action;
+    const res = await fetch(url, {
+      method:'POST',
+      body: JSON.stringify({ sheet: SHEET_NAME, action, ...payload })
+    });
+    const json = await res.json();
+    return json;
+  } catch(e) {
+    console.warn('GAS error:', e);
+    return null;
+  }
+}
+
+async function loadQuotes() {
+  const r = await gasReq('getAll');
+  if (r && r.data) {
+    DB_QUOTES = r.data.map(row => ({
+      id:           row[0]||'',
+      cliente:      row[1]||'',
+      contacto:     row[2]||'',
+      proyecto:     row[3]||'',
+      version:      row[4]||'',
+      fecha:        row[5]||'',
+      ejecutiva:    row[6]||'',
+      tipoServicio: row[7]||'',
+      estatus:      row[8]||'',
+      unidades:     row[9]||'',
+      tipoUnidad:   row[10]||'',
+      peso:         row[11]||'',
+      km:           row[12]||'',
+      combustible:  row[13]||'',
+      eficiencia:   row[14]||'',
+      mantMensual:  row[15]||'',
+      diasUso:      row[16]||'',
+      costoMant:    row[17]||'',
+      costoRep:     row[18]||'',
+      numCC:        row[19]||'',
+      dirCC:        row[20]||'',
+      unidadesCC:   row[21]||'',
+      tiempoCarga:  row[22]||'',
+      tipoCarga:    row[23]||'',
+      linkCot:      row[24]||'',
+      linkContrato: row[25]||'',
+      linkPropuesta:row[26]||'',
+      referente:    row[27]||'',
+      notas:        row[28]||'',
+      creado:       row[29]||'',
+    }));
+  } else {
+    // Demo data si no conecta
+    if (DB_QUOTES.length === 0) loadDemoData();
+  }
+  renderAll();
+}
+
+function loadDemoData() {
+  DB_QUOTES = [
+    { id:'COT-001', cliente:'Grupo Empresarial Norte', contacto:'Ing. Ramírez', proyecto:'Electrificación flota 30 unidades CDMX',
+      version:'v1.0', fecha:'2026-03-10', ejecutiva:'Ivonne C.', tipoServicio:'Conversión de flota',
+      estatus:'Negociación', unidades:'30', tipoUnidad:'Urbana', peso:'4.5', km:'180', combustible:'22',
+      eficiencia:'8', mantMensual:'15000', diasUso:'26', costoMant:'15000', costoRep:'80000',
+      numCC:'2', dirCC:'Av. Industrial 450, CDMX', unidadesCC:'15', tiempoCarga:'8', tipoCarga:'Nocturna',
+      linkCot:'https://drive.google.com', linkContrato:'', linkPropuesta:'https://drive.google.com',
+      referente:'Campaña Q1-2026', notas:'Cliente muy interesado. Próxima reunión 20 mar.', creado:'2026-03-10' },
+    { id:'COT-002', cliente:'Transportes del Bajío S.A.', contacto:'Lic. Gutiérrez', proyecto:'Pre-cotización 15 unidades mercancía',
+      version:'v1.0', fecha:'2026-03-12', ejecutiva:'Ale S.', tipoServicio:'Solución integral',
+      estatus:'Pre-cotización', unidades:'15', tipoUnidad:'Mercancía', peso:'8', km:'120', combustible:'22',
+      eficiencia:'5', mantMensual:'25000', diasUso:'22', costoMant:'25000', costoRep:'120000',
+      numCC:'1', dirCC:'Blvd. Díaz Ordaz 890, GDL', unidadesCC:'15', tiempoCarga:'10', tipoCarga:'Nocturna',
+      linkCot:'', linkContrato:'', linkPropuesta:'', referente:'Referido Jorge A.', notas:'Pendiente datos técnicos completos.', creado:'2026-03-12' },
+    { id:'COT-003', cliente:'Plaza Antara Polanco', contacto:'Dir. Operaciones', proyecto:'Electrolinera pública 20 cargadores',
+      version:'v2.1', fecha:'2026-03-05', ejecutiva:'Ivonne C.', tipoServicio:'Infraestructura de recarga',
+      estatus:'Cotización formal', unidades:'0', tipoUnidad:'', peso:'', km:'', combustible:'',
+      eficiencia:'', mantMensual:'', diasUso:'', costoMant:'', costoRep:'',
+      numCC:'1', dirCC:'Ejército Nacional 843-B, CDMX', unidadesCC:'0', tiempoCarga:'24', tipoCarga:'Combinada',
+      linkCot:'https://drive.google.com', linkContrato:'', linkPropuesta:'https://drive.google.com',
+      referente:'Dylan prospectó', notas:'Propuesta enviada. Esperando retroalimentación del área técnica.', creado:'2026-03-05' },
+    { id:'COT-004', cliente:'Logística Express MX', contacto:'Ing. Solís', proyecto:'Conversión + infraestructura 50 unidades',
+      version:'v1.2', fecha:'2026-02-28', ejecutiva:'Ale S.', tipoServicio:'Solución integral',
+      estatus:'Cerrado-Ganado', unidades:'50', tipoUnidad:'Última milla', peso:'2.5', km:'200', combustible:'22',
+      eficiencia:'10', mantMensual:'8000', diasUso:'28', costoMant:'8000', costoRep:'30000',
+      numCC:'3', dirCC:'CDMX, GDL, MTY', unidadesCC:'17', tiempoCarga:'8', tipoCarga:'Nocturna',
+      linkCot:'https://drive.google.com', linkContrato:'https://drive.google.com', linkPropuesta:'https://drive.google.com',
+      referente:'Prospecto directo Mario', notas:'GANADO. Firma 15 mar. Inicio proyecto abril.', creado:'2026-02-28' },
+  ];
+}
+
+async function saveQuote() {
+  const cliente = document.getElementById('f-cliente').value.trim();
+  const proyecto = document.getElementById('f-proyecto').value.trim();
+  if (!cliente || !proyecto) return toast('Nombre de cliente y proyecto son requeridos', true);
+
+  const q = {
+    id:           EDIT_ID || 'COT-' + String(Date.now()).slice(-5),
+    cliente,
+    contacto:     document.getElementById('f-contacto').value,
+    proyecto,
+    version:      document.getElementById('f-version').value || 'v1.0',
+    fecha:        document.getElementById('f-fecha').value || today(),
+    ejecutiva:    document.getElementById('f-exec').value,
+    tipoServicio: document.getElementById('f-tipo-serv').value,
+    estatus:      document.getElementById('f-status').value,
+    unidades:     document.getElementById('f-unidades').value,
+    tipoUnidad:   document.getElementById('f-tipo-unidad').value,
+    peso:         document.getElementById('f-peso').value,
+    km:           document.getElementById('f-km').value,
+    combustible:  document.getElementById('f-combustible').value,
+    eficiencia:   document.getElementById('f-eficiencia').value,
+    mantMensual:  document.getElementById('f-mant-mensual').value,
+    diasUso:      document.getElementById('f-dias-uso').value,
+    costoMant:    document.getElementById('f-costo-mant').value,
+    costoRep:     document.getElementById('f-costo-rep').value,
+    numCC:        document.getElementById('f-num-cc').value,
+    dirCC:        document.getElementById('f-dir-cc').value,
+    unidadesCC:   document.getElementById('f-unidades-cc').value,
+    tiempoCarga:  document.getElementById('f-tiempo-carga').value,
+    tipoCarga:    document.getElementById('f-tipo-carga').value,
+    linkCot:      document.getElementById('f-link-cot').value,
+    linkContrato: document.getElementById('f-link-contrato').value,
+    linkPropuesta:document.getElementById('f-link-propuesta').value,
+    referente:    document.getElementById('f-referente').value,
+    notas:        document.getElementById('f-notas').value,
+    creado:       EDIT_ID ? (DB_QUOTES.find(x=>x.id===EDIT_ID)||{}).creado || today() : today(),
+  };
+
+  // Optimistic UI
+  if (EDIT_ID) {
+    const idx = DB_QUOTES.findIndex(x=>x.id===EDIT_ID);
+    if (idx>=0) DB_QUOTES[idx] = q;
+  } else {
+    DB_QUOTES.unshift(q);
+  }
+  closeModal();
+  renderAll();
+  toast(EDIT_ID ? '✓ Cotización actualizada' : '✓ Cotización creada');
+
+  // Background sync
+  const row = [q.id,q.cliente,q.contacto,q.proyecto,q.version,q.fecha,q.ejecutiva,q.tipoServicio,q.estatus,
+    q.unidades,q.tipoUnidad,q.peso,q.km,q.combustible,q.eficiencia,q.mantMensual,q.diasUso,q.costoMant,q.costoRep,
+    q.numCC,q.dirCC,q.unidadesCC,q.tiempoCarga,q.tipoCarga,q.linkCot,q.linkContrato,q.linkPropuesta,q.referente,q.notas,q.creado];
+  const action = EDIT_ID ? 'update' : 'create';
+  gasReq(action, { id: q.id, row }).then(r=>{
+    if(!r||r.error) console.warn('sync failed', r);
+  });
+}
+
+function deleteQuote() {
+  if (!EDIT_ID) return;
+  if (!confirm('¿Eliminar esta cotización? Esta acción no se puede deshacer.')) return;
+  DB_QUOTES = DB_QUOTES.filter(x=>x.id!==EDIT_ID);
+  gasReq('delete', { id: EDIT_ID });
+  closeModal();
+  renderAll();
+  toast('Cotización eliminada');
+}
+
+// ══════════════════════════════════════════════════════
+// MODAL
+// ══════════════════════════════════════════════════════
+function openModal(id=null) {
+  EDIT_ID = id;
+  document.getElementById('modal-title-text').textContent = id ? '// EDITAR COTIZACIÓN' : '// NUEVA COTIZACIÓN';
+  document.getElementById('btn-del-quote').style.display = id ? 'block' : 'none';
+
+  if (id) {
+    const q = DB_QUOTES.find(x=>x.id===id);
+    if (!q) return;
+    document.getElementById('f-cliente').value     = q.cliente;
+    document.getElementById('f-contacto').value    = q.contacto;
+    document.getElementById('f-proyecto').value    = q.proyecto;
+    document.getElementById('f-version').value     = q.version;
+    document.getElementById('f-fecha').value       = q.fecha;
+    document.getElementById('f-exec').value        = q.ejecutiva;
+    document.getElementById('f-tipo-serv').value   = q.tipoServicio;
+    document.getElementById('f-status').value      = q.estatus;
+    document.getElementById('f-unidades').value    = q.unidades;
+    document.getElementById('f-tipo-unidad').value = q.tipoUnidad;
+    document.getElementById('f-peso').value        = q.peso;
+    document.getElementById('f-km').value          = q.km;
+    document.getElementById('f-combustible').value = q.combustible;
+    document.getElementById('f-eficiencia').value  = q.eficiencia;
+    document.getElementById('f-mant-mensual').value= q.mantMensual;
+    document.getElementById('f-dias-uso').value    = q.diasUso;
+    document.getElementById('f-costo-mant').value  = q.costoMant;
+    document.getElementById('f-costo-rep').value   = q.costoRep;
+    document.getElementById('f-num-cc').value      = q.numCC;
+    document.getElementById('f-dir-cc').value      = q.dirCC;
+    document.getElementById('f-unidades-cc').value = q.unidadesCC;
+    document.getElementById('f-tiempo-carga').value= q.tiempoCarga;
+    document.getElementById('f-tipo-carga').value  = q.tipoCarga;
+    document.getElementById('f-link-cot').value    = q.linkCot;
+    document.getElementById('f-link-contrato').value= q.linkContrato;
+    document.getElementById('f-link-propuesta').value= q.linkPropuesta;
+    document.getElementById('f-referente').value   = q.referente;
+    document.getElementById('f-notas').value       = q.notas;
+  } else {
+    document.getElementById('f-fecha').value = today();
+    document.getElementById('f-exec').value = CURRENT_USER !== 'Ver todo (Admin)' ? CURRENT_USER : 'Ivonne C.';
+    ['f-cliente','f-contacto','f-proyecto','f-contacto','f-version',
+     'f-unidades','f-peso','f-km','f-combustible','f-eficiencia',
+     'f-mant-mensual','f-dias-uso','f-costo-mant','f-costo-rep',
+     'f-num-cc','f-dir-cc','f-unidades-cc','f-tiempo-carga',
+     'f-link-cot','f-link-contrato','f-link-propuesta','f-referente','f-notas'
+    ].forEach(id=>{ const el=document.getElementById(id); if(el)el.value=''; });
+    document.getElementById('f-version').value='v1.0';
+    document.getElementById('f-tipo-unidad').value='';
+    document.getElementById('f-tipo-carga').value='';
+  }
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  EDIT_ID = null;
+}
+
+// ══════════════════════════════════════════════════════
+// RENDER
+// ══════════════════════════════════════════════════════
+function renderAll() {
+  renderKPIs();
+  renderPipeline();
+  renderRecientes();
+  renderCotizaciones();
+  renderDocs();
+}
+
+function filterForUser(list) {
+  if (!CURRENT_USER || CURRENT_USER === 'Ver todo (Admin)' || CURRENT_USER === 'Axel' || CURRENT_USER === 'Mario') return list;
+  return list.filter(q => q.ejecutiva === CURRENT_USER);
+}
+
+function renderKPIs() {
+  const list = filterForUser(DB_QUOTES);
+  document.getElementById('kpi-total').textContent = list.length;
+  document.getElementById('kpi-pre').textContent = list.filter(q=>q.estatus==='Pre-cotización').length;
+  document.getElementById('kpi-negoc').textContent = list.filter(q=>q.estatus==='Negociación').length;
+  document.getElementById('kpi-cerrado').textContent = list.filter(q=>q.estatus==='Cerrado-Ganado').length;
+}
+
+function renderPipeline() {
+  const list = filterForUser(DB_QUOTES);
+  const stages = Object.keys(STAGE_CFG);
+  const el = document.getElementById('pipeline-kanban');
+  el.innerHTML = stages.map(stage => {
+    const items = list.filter(q=>q.estatus===stage);
+    const cfg = STAGE_CFG[stage];
+    return `<div class="pipeline-col">
+      <div class="pipeline-col-head" style="--stage-c:${cfg.color}">
+        <span>${stage}</span>
+        <div style="display:flex;align-items:center;gap:.35rem">
+          <div class="dot"></div>
+          <span class="ct">${items.length}</span>
+        </div>
+      </div>
+      <div class="pipeline-body">
+        ${items.length===0?`<div style="text-align:center;padding:1rem;color:var(--gray);font-size:.72rem">—</div>`:''}
+        ${items.map(q=>`
+          <div class="p-card" onclick="showDetalle('${q.id}')">
+            <div class="p-cliente">${q.cliente}</div>
+            <div class="p-meta">${q.proyecto.length>38?q.proyecto.slice(0,38)+'…':q.proyecto}</div>
+            <div class="p-meta" style="margin-top:.25rem">${q.ejecutiva} · ${q.unidades?q.unidades+' u.':q.tipoServicio}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderRecientes() {
+  const list = filterForUser(DB_QUOTES).slice(0,6);
+  const tb = document.getElementById('tbody-reciente');
+  if (list.length===0) {
+    tb.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--gray)">Sin cotizaciones. ¡Crea la primera!</td></tr>`;
+    return;
+  }
+  tb.innerHTML = list.map(q=>`
+    <tr class="qrow" onclick="showDetalle('${q.id}')">
+      <td><code style="color:var(--green);font-size:.75rem">${q.id}</code></td>
+      <td><b>${q.cliente}</b></td>
+      <td style="color:var(--gray)">${q.proyecto.length>40?q.proyecto.slice(0,40)+'…':q.proyecto}</td>
+      <td>${q.ejecutiva}</td>
+      <td>${badge(q.estatus)}</td>
+      <td>${q.unidades||'—'}</td>
+      <td style="color:var(--gray);font-size:.75rem">${q.fecha||'—'}</td>
+    </tr>
+  `).join('');
+}
+
+function renderCotizaciones() {
+  const exec   = document.getElementById('f-ejecutiva').value;
+  const status = document.getElementById('f-estatus').value;
+  const tipo   = document.getElementById('f-tipo').value;
+  const buscar = (document.getElementById('f-buscar').value||'').toLowerCase();
+  let list = filterForUser(DB_QUOTES);
+  if (exec)   list = list.filter(q=>q.ejecutiva===exec);
+  if (status) list = list.filter(q=>q.estatus===status);
+  if (tipo)   list = list.filter(q=>q.tipoServicio===tipo);
+  if (buscar) list = list.filter(q=>(q.cliente+q.proyecto).toLowerCase().includes(buscar));
+  const tb = document.getElementById('tbody-all');
+  if (list.length===0) {
+    tb.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:2rem;color:var(--gray)">Sin resultados</td></tr>`;
+    return;
+  }
+  tb.innerHTML = list.map(q=>`
+    <tr class="qrow" onclick="showDetalle('${q.id}')">
+      <td><code style="color:var(--green);font-size:.75rem">${q.id}</code></td>
+      <td><b>${q.cliente}</b></td>
+      <td style="color:var(--gray)">${q.proyecto.length>38?q.proyecto.slice(0,38)+'…':q.proyecto}</td>
+      <td style="color:var(--gray);font-size:.78rem">${q.tipoServicio}</td>
+      <td>${q.ejecutiva}</td>
+      <td>${badge(q.estatus)}</td>
+      <td>${q.unidades||'—'}</td>
+      <td style="color:var(--gray);font-size:.75rem">${q.version}</td>
+      <td style="color:var(--gray);font-size:.75rem">${q.fecha||'—'}</td>
+    </tr>
+  `).join('');
+}
+
+function renderDocs() {
+  const docsEl = document.getElementById('docs-grid');
+  const docs = [];
+  DB_QUOTES.forEach(q=>{
+    if(q.linkCot) docs.push({tipo:'Cotización formal',nombre:q.proyecto,cliente:q.cliente,link:q.linkCot,estatus:q.estatus,ejecutiva:q.ejecutiva,fecha:q.fecha});
+    if(q.linkContrato) docs.push({tipo:'Contrato',nombre:q.proyecto,cliente:q.cliente,link:q.linkContrato,estatus:q.estatus,ejecutiva:q.ejecutiva,fecha:q.fecha});
+    if(q.linkPropuesta) docs.push({tipo:'Propuesta técnica',nombre:q.proyecto,cliente:q.cliente,link:q.linkPropuesta,estatus:q.estatus,ejecutiva:q.ejecutiva,fecha:q.fecha});
+  });
+  if (docs.length===0) {
+    docsEl.innerHTML = `<div class="empty-state"><div class="es-icon">📄</div><div class="es-msg">Los documentos vinculados a cotizaciones aparecerán aquí.<br>Agrega links de Drive al crear o editar una cotización.</div></div>`;
+    return;
+  }
+  docsEl.innerHTML = docs.map(d=>`
+    <div class="doc-card" onclick="window.open('${d.link}','_blank')">
+      <div class="dc-type">${d.tipo}</div>
+      <div class="dc-name">${d.nombre}</div>
+      <div class="dc-meta">${d.cliente} · ${d.ejecutiva}</div>
+      <div class="dc-status">${badge(d.estatus)}</div>
+    </div>
+  `).join('');
+}
+
+// ══════════════════════════════════════════════════════
+// DETALLE
+// ══════════════════════════════════════════════════════
+function showDetalle(id) {
+  const q = DB_QUOTES.find(x=>x.id===id);
+  if (!q) return;
+  const el = document.getElementById('detalle-content');
+  el.innerHTML = `
+    <div class="det-header">
+      <div class="det-title-block">
+        <div class="det-num">${q.id} · ${q.version}</div>
+        <h1>${q.cliente}</h1>
+        <div class="det-date">${q.proyecto} · ${q.fecha||''}</div>
+      </div>
+      <div class="det-actions">
+        ${badge(q.estatus)}
+        <button class="btn-ghost" onclick="openModal('${q.id}')">✏️ Editar</button>
+        ${q.linkCot?`<a href="${q.linkCot}" target="_blank" class="btn-ghost" style="text-decoration:none">📄 Cotización</a>`:''}
+        ${q.linkContrato?`<a href="${q.linkContrato}" target="_blank" class="btn-ghost" style="text-decoration:none">📋 Contrato</a>`:''}
+      </div>
+    </div>
+
+    <div class="det-grid">
+      <div>
+        <div class="det-card" style="margin-bottom:1rem">
+          <div class="det-card-title">Datos del proyecto</div>
+          ${detRow('Ejecutiva',q.ejecutiva)}
+          ${detRow('Contacto',q.contacto||'—')}
+          ${detRow('Tipo de servicio',q.tipoServicio)}
+          ${detRow('Referente',q.referente||'—')}
+        </div>
+        ${q.unidades?`
+        <div class="det-card" style="margin-bottom:1rem">
+          <div class="det-card-title">Datos de flota</div>
+          ${detRow('Unidades',q.unidades+' vehículos')}
+          ${detRow('Tipo de unidad',q.tipoUnidad||'—')}
+          ${detRow('Peso bruto vehicular',q.peso?q.peso+' ton':'—')}
+          ${detRow('KM diarios',q.km?q.km+' km/día':'—')}
+          ${detRow('Combustible',q.combustible?'$'+q.combustible+'/litro':'—')}
+          ${detRow('Eficiencia actual',q.eficiencia?q.eficiencia+' km/litro':'—')}
+          ${detRow('Mantenimiento mensual',q.mantMensual?'$'+Number(q.mantMensual).toLocaleString():'—')}
+          ${detRow('Días de uso mensual',q.diasUso?q.diasUso+' días':'—')}
+        </div>`:''}
+        ${q.numCC?`
+        <div class="det-card">
+          <div class="det-card-title">Centros de carga</div>
+          ${detRow('Núm. centros',q.numCC)}
+          ${detRow('Dirección(es)',q.dirCC||'—')}
+          ${detRow('Unidades por centro',q.unidadesCC||'—')}
+          ${detRow('Tipo de carga',q.tipoCarga||'—')}
+          ${detRow('Tiempo disponible',q.tiempoCarga?q.tiempoCarga+' h':'—')}
+        </div>`:''}
+      </div>
+      <div>
+        <div class="det-card" style="margin-bottom:1rem">
+          <div class="det-card-title">Seguimiento</div>
+          <ul class="timeline">
+            <li class="tl-item">
+              <div class="tl-dot ok"></div>
+              <div class="tl-content">
+                <div class="tl-title">Creación</div>
+                <div class="tl-meta">${q.creado||q.fecha||'—'}</div>
+              </div>
+            </li>
+            <li class="tl-item">
+              <div class="tl-dot ${q.estatus==='Cotización formal'||q.estatus==='Negociación'||q.estatus==='Cerrado-Ganado'?'ok':q.linkCot?'warn':''}"></div>
+              <div class="tl-content">
+                <div class="tl-title">Cotización formal</div>
+                <div class="tl-meta">${q.linkCot?'<a href="'+q.linkCot+'" target="_blank" style="color:var(--green)">Ver documento →</a>':'Pendiente'}</div>
+              </div>
+            </li>
+            <li class="tl-item">
+              <div class="tl-dot ${q.estatus==='Negociación'||q.estatus==='Cerrado-Ganado'?'ok':''}"></div>
+              <div class="tl-content">
+                <div class="tl-title">Negociación</div>
+                <div class="tl-meta">${q.estatus==='Negociación'?'En curso':q.estatus==='Cerrado-Ganado'?'Completada':'Pendiente'}</div>
+              </div>
+            </li>
+            <li class="tl-item">
+              <div class="tl-dot ${q.estatus==='Cerrado-Ganado'?'ok':q.linkContrato?'warn':''}"></div>
+              <div class="tl-content">
+                <div class="tl-title">Contrato / Cierre</div>
+                <div class="tl-meta">${q.linkContrato?'<a href="'+q.linkContrato+'" target="_blank" style="color:var(--green)">Ver contrato →</a>':q.estatus==='Cerrado-Ganado'?'Ganado ✓':'Pendiente'}</div>
+              </div>
+            </li>
+          </ul>
+        </div>
+        ${q.notas?`
+        <div class="det-card">
+          <div class="det-card-title">Notas internas</div>
+          <p style="font-size:.82rem;color:var(--gray);line-height:1.5">${q.notas}</p>
+        </div>`:''}
+      </div>
+    </div>
+  `;
+  nav('detalle');
+}
+function detRow(label, val) {
+  return `<div class="det-row"><span class="det-row-label">${label}</span><span class="det-row-val">${val}</span></div>`;
+}
+
+// ══════════════════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════════════════
+function today() {
+  return new Date().toISOString().split('T')[0];
+}
+function toast(msg, err=false) {
+  const el = document.createElement('div');
+  el.className = 'toast' + (err?' err':'');
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(), 3000);
+}
+
+// ── INIT ──
+document.getElementById('f-fecha').value = today();
+loadDemoData(); // Carga demo data mientras no hay Sheet configurado
+renderAll();
+</script>
+</body>
+</html>
