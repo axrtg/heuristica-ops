@@ -259,8 +259,8 @@ textarea{resize:vertical;min-height:80px}
       <div class="role-btn" onclick="selectRole(this,'Axel','Marketing Lead')"><div class="role-name">Axel</div><div class="role-title">Marketing Lead</div></div>
       <div class="role-btn" onclick="selectRole(this,'Arturo','Diseñador Gráfico')"><div class="role-name">Arturo</div><div class="role-title">Diseñador Gráfico</div></div>
       <div class="role-btn" onclick="selectRole(this,'Alejandro','Marketing Analytics')"><div class="role-name">Alejandro</div><div class="role-title">Marketing Analytics</div></div>
-      <div class="role-btn" onclick="selectRole(this,'MelissaG','Community Manager')"><div class="role-name">Melissa G.</div><div class="role-title">Community Manager</div></div>
-      <div class="role-btn" onclick="selectRole(this,'Dylan','Becario')"><div class="role-name">Dylan</div><div class="role-title">Becario</div></div>
+      <div class="role-btn" style="border-color:rgba(190,24,93,0.5);background:rgba(190,24,93,0.06)" onclick="selectRole(this,'MelissaG','Ejecutiva de Ventas')"><div class="role-name" style="color:#be185d">💼 Melissa G.</div><div class="role-title">Ejecutiva de Ventas</div></div>
+      <div class="role-btn" style="border-color:rgba(14,165,233,0.5);background:rgba(14,165,233,0.06)" onclick="selectRole(this,'Dylan','CM + LinkedIn')"><div class="role-name" style="color:#0ea5e9">📱 Dylan</div><div class="role-title">CM + LinkedIn</div></div>
       <div class="role-btn" onclick="selectRole(this,'MelissaA','Diseño Visual')"><div class="role-name">Melissa A.</div><div class="role-title">Diseño Visual</div></div>
       <div class="role-btn" onclick="selectRole(this,'Jorge','Becario · Sistemas')"><div class="role-name">Jorge A.</div><div class="role-title">Becario · Sistemas</div></div>
       <div class="role-btn" style="border-color:rgba(190,24,93,0.5);background:rgba(190,24,93,0.06)" onclick="selectRole(this,'Ivonne','Ejecutiva de Ventas')"><div class="role-name" style="color:#be185d">💼 Ivonne C.</div><div class="role-title">Ejecutiva de Ventas</div></div>
@@ -285,11 +285,12 @@ textarea{resize:vertical;min-height:80px}
     </div>
   </div>
   <div class="nav">
-    <div class="nav-item active" onclick="showTab('crm',this)">CRM</div>
+    <div class="nav-item active" onclick="showTab('crm',this)">🏢 CRM</div>
     <div class="nav-item" onclick="showTab('assets',this)">Banco de Assets</div>
     <div class="nav-item" onclick="showTab('calendar',this)">Calendario</div>
     <div class="nav-item" onclick="showTab('tasks',this)">Tareas</div>
     <div class="nav-item" onclick="showTab('guide',this)">📋 Guía Semanal</div>
+    <div class="nav-item" onclick="showTab('quotes',this)" style="color:#be185d;font-weight:600">💼 Cotizaciones</div>
 
   </div>
   <div class="content">
@@ -312,7 +313,7 @@ textarea{resize:vertical;min-height:80px}
           </select>
           <select class="setup-input filter-select" id="crm-filter-owner" onchange="renderCRM()">
             <option value="">Todos</option>
-            <option>Mario</option><option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa G.</option><option>Melissa A.</option><option>Dylan</option><option>Jorge</option><option>Ivonne C.</option><option>Ale S.</option>
+            <option>Mario</option><option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa A.</option><option>Dylan (CM)</option><option>Jorge</option><option>Ivonne C.</option><option>Ale S.</option><option>Melissa G.</option>
           </select>
         </div>
         <div id="crm-pipeline"></div>
@@ -374,7 +375,7 @@ textarea{resize:vertical;min-height:80px}
           <div class="actions">
             <select class="setup-input filter-select" id="task-filter-assignee" onchange="renderTasks()">
               <option value="">Todos</option>
-              <option>Mario</option><option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa G.</option><option>Melissa A.</option><option>Dylan</option><option>Jorge</option><option>Ivonne C.</option><option>Ale S.</option>
+              <option>Mario</option><option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa A.</option><option>Dylan (CM)</option><option>Jorge</option><option>Ivonne C.</option><option>Ale S.</option><option>Melissa G.</option>
             </select>
             <button class="btn btn-primary btn-sm" onclick="openModal('task-modal')">+ Nueva tarea</button>
           </div>
@@ -391,7 +392,7 @@ textarea{resize:vertical;min-height:80px}
           <div class="actions">
             <select class="setup-input filter-select" id="guide-role-filter" onchange="renderGuide()">
               <option value="">Todos los roles</option>
-              <option>Mario</option><option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa G.</option><option>Melissa A.</option><option>Dylan</option><option>Jorge</option><option>Ivonne C.</option><option>Ale S.</option>
+              <option>Mario</option><option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa A.</option><option>Dylan (CM)</option><option>Jorge</option><option>Ivonne C.</option><option>Ale S.</option><option>Melissa G.</option>
             </select>
           </div>
         </div>
@@ -402,7 +403,53 @@ textarea{resize:vertical;min-height:80px}
       </div>
     </div>
 
-
+    <!-- QUOTES TAB -->
+    <div id="tab-quotes" class="tab-content" style="display:none">
+      <div class="panel">
+        <div class="panel-title">
+          💼 COTIZACIONES · EQUIPO DE VENTAS
+          <div class="actions">
+            <span style="font-size:11px;color:var(--text2)">Ivonne C. · Ale S. · Melissa G.</span>
+            <button class="btn btn-primary btn-sm" onclick="window.open('cotizaciones.html','_blank')">Plataforma completa ↗</button>
+          </div>
+        </div>
+        <div id="quotes-kpis" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px"></div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--text2);margin-bottom:10px;text-transform:uppercase">Pipeline</div>
+        <div id="quotes-pipeline" style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:20px"></div>
+        <div class="filters" style="margin-bottom:12px">
+          <select class="setup-input filter-select" id="q-filter-exec" onchange="renderQuotesTab()">
+            <option value="">Todas las ejecutivas</option>
+            <option>Ivonne C.</option><option>Ale S.</option><option>Melissa G.</option><option>Mario</option><option>Axel</option>
+          </select>
+          <select class="setup-input filter-select" id="q-filter-status" onchange="renderQuotesTab()">
+            <option value="">Todos los estatus</option>
+            <option>Pre-cotización</option><option>Cotización formal</option><option>Negociación</option><option>Cerrado-Ganado</option><option>Cerrado-Perdido</option>
+          </select>
+          <input class="setup-input filter-input" id="q-search" placeholder="🔍 Buscar cliente..." oninput="renderQuotesTab()" style="min-width:180px">
+        </div>
+        <div id="quotes-table-wrap"></div>
+        <div style="margin-top:20px;padding:16px;background:rgba(190,24,93,0.06);border:1px solid rgba(190,24,93,0.22);border-radius:10px">
+          <div style="font-size:12px;font-weight:700;color:#be185d;margin-bottom:12px;letter-spacing:.06em">+ REGISTRAR COTIZACIÓN RÁPIDA</div>
+          <div class="form-grid">
+            <div class="form-group"><label>Cliente *</label><input id="qf-cliente" placeholder="Empresa o persona"></div>
+            <div class="form-group"><label>Proyecto</label><input id="qf-proyecto" placeholder="Descripción breve"></div>
+            <div class="form-group"><label>Ejecutiva</label>
+              <select id="qf-exec"><option>Ivonne C.</option><option>Ale S.</option><option>Melissa G.</option><option>Mario</option><option>Axel</option></select>
+            </div>
+            <div class="form-group"><label>Estatus</label>
+              <select id="qf-status"><option>Pre-cotización</option><option>Cotización formal</option><option>Negociación</option><option>Cerrado-Ganado</option><option>Cerrado-Perdido</option></select>
+            </div>
+            <div class="form-group"><label>Unidades / tipo</label><input id="qf-unidades" placeholder="Ej. 20 unidades urbanas"></div>
+            <div class="form-group"><label>Link cotización (Drive)</label><input id="qf-link" placeholder="https://drive.google.com/..."></div>
+          </div>
+          <div class="form-group" style="margin-top:10px"><label>Notas</label><textarea id="qf-notas" style="width:100%;min-height:55px;resize:vertical" placeholder="Contexto, próximos pasos..."></textarea></div>
+          <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:12px">
+            <button class="btn btn-secondary btn-sm" onclick="clearQuoteForm()">Limpiar</button>
+            <button class="btn btn-primary btn-sm" onclick="saveQuickQuote()">💾 Guardar cotización</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
   </div>
 </div>
@@ -429,7 +476,7 @@ textarea{resize:vertical;min-height:80px}
         <select id="crm-stage"><option>Prospecto</option><option>Contactado</option><option>Interesado</option><option>Propuesta</option><option>Negociación</option><option>Cerrado ✓</option><option>Descartado</option></select>
       </div>
       <div class="form-group"><label>Responsable</label>
-        <select id="crm-owner"><option>Mario</option><option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa G.</option><option>Melissa A.</option><option>Dylan</option><option>Jorge</option><option>Ivonne C.</option><option>Ale S.</option></select>
+        <select id="crm-owner"><option>Mario</option><option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa A.</option><option>Dylan (CM)</option><option>Jorge</option><option>Ivonne C.</option><option>Ale S.</option><option>Melissa G.</option></select>
       </div>
       <div class="form-group"><label>🔥 Oportunidad de venta</label>
         <select id="crm-salesflag"><option value="0">No</option><option value="1">Sí — marcar como hot lead</option></select>
@@ -487,7 +534,7 @@ textarea{resize:vertical;min-height:80px}
         <select id="post-status"><option>Borrador</option><option>En revisión</option><option>Programado</option><option>Publicado</option></select>
       </div>
       <div class="form-group"><label>Autor</label>
-        <select id="post-author"><option>Mario</option><option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa G.</option><option>Melissa A.</option><option>Dylan</option><option>Jorge</option><option>Ivonne C.</option><option>Ale S.</option></select>
+        <select id="post-author"><option>Mario</option><option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa A.</option><option>Dylan (CM)</option><option>Jorge</option><option>Ivonne C.</option><option>Ale S.</option><option>Melissa G.</option></select>
       </div>
       <div class="form-group full"><label>Copy / Texto del post</label><textarea id="post-copy" placeholder="Escribe el texto del post aquí..." style="min-height:100px"></textarea></div>
       <div class="form-group full"><label>🔗 Link del archivo en Drive <span style="font-size:11px;color:var(--text2);font-weight:400">(opcional — pega el link del video/imagen en Drive)</span></label><input id="post-drive-link" placeholder="https://drive.google.com/file/d/..."></div>
@@ -506,7 +553,7 @@ textarea{resize:vertical;min-height:80px}
     <div class="form-grid">
       <div class="form-group full"><label>Tarea *</label><input id="task-text" placeholder="Descripción de la tarea"></div>
       <div class="form-group"><label>Asignado a</label>
-        <select id="task-assignee"><option>Mario</option><option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa G.</option><option>Melissa A.</option><option>Dylan</option><option>Jorge</option><option>Ivonne C.</option><option>Ale S.</option></select>
+        <select id="task-assignee"><option>Mario</option><option>Axel</option><option>Arturo</option><option>Alejandro</option><option>Melissa A.</option><option>Dylan (CM)</option><option>Jorge</option><option>Ivonne C.</option><option>Ale S.</option><option>Melissa G.</option></select>
       </div>
       <div class="form-group"><label>Prioridad</label>
         <select id="task-priority"><option>Normal</option><option>Alta</option><option>Urgente</option><option>Baja</option></select>
@@ -657,6 +704,17 @@ function refreshAll() {
   loadSheet('posts', function(rows){ DB.posts = rows; renderCalendar(); renderPostsList(); });
   loadSheet('tasks', function(rows){ DB.tasks = rows; renderTasks(); });
   loadSheet('guide', function(rows){ DB.guide = rows; renderGuide(); });
+  loadSheet('quotes', function(rows){
+    DB_QUOTES = rows.map(function(r){
+      return { id:r[0]||'', cliente:r[1]||'', contacto:r[2]||'', proyecto:r[3]||'', version:r[4]||'',
+        fecha:r[5]||'', ejecutiva:r[6]||'', tipoServicio:r[7]||'', estatus:r[8]||'', unidades:r[9]||'',
+        tipoUnidad:r[10]||'', peso:r[11]||'', km:r[12]||'', combustible:r[13]||'', eficiencia:r[14]||'',
+        mantMensual:r[15]||'', diasUso:r[16]||'', costoMant:r[17]||'', costoRep:r[18]||'', numCC:r[19]||'',
+        dirCC:r[20]||'', unidadesCC:r[21]||'', tiempoCarga:r[22]||'', tipoCarga:r[23]||'',
+        linkCot:r[24]||'', linkContrato:r[25]||'', linkPropuesta:r[26]||'', referente:r[27]||'',
+        notas:r[28]||'', creado:r[29]||'' };
+    });
+  });
 }
 
 function loadSheet(sheet, cb) {
@@ -1331,74 +1389,74 @@ var WEEKLY_GUIDE = {
     }
   },
   'MelissaG': {
-    role: 'Community Manager',
-    color: '#ab47bc',
+    role: 'Ejecutiva de Ventas',
+    color: '#be185d',
     days: {
       'Lunes': [
-        'Revisar y responder todos los mensajes/comentarios del fin de semana',
-        'Programar publicaciones de la semana en todas las plataformas',
-        'Verificar que el Calendario de Contenido esté alineado con lo que se va a publicar',
-        'Monitorear menciones de Heuristica y keywords del sector'
+        '📋 Revisar el CRM — ¿hay leads nuevos de Jorge o Dylan asignados?',
+        '💬 Coordinación con Ivonne y Ale S.: dividir pipeline de la semana para no duplicar',
+        '📞 Preparar guión para los primeros acercamientos de la semana',
+        '🎯 Priorizar 5 prospectos a contactar esta semana'
       ],
       'Martes': [
-        'Publicar y hacer seguimiento del primer post de la semana',
-        'Interacción activa: comentar en publicaciones del sector (grupos de EV, LinkedIn)',
-        'Reportar cualquier comentario negativo o consulta técnica a Axel',
-        'Actualizar el CRM si algún prospecto contactó por redes sociales'
+        '📞 Hacer los primeros 3-4 acercamientos del pipeline (WhatsApp, llamada o email)',
+        '📝 Registrar respuestas en el CRM: cambiar etapa según avance',
+        '📄 Si algún lead pide más info: enviar presentación de Arturo',
+        '💬 Reportar a Axel cualquier lead caliente que avance'
       ],
       'Miércoles': [
-        'Publicación de stories o contenido efímero',
-        'Revisar estadísticas mid-week: ¿cómo van los posts?',
-        'Interacción: responder comentarios, dar likes estratégicos',
-        'Coordinar con Arturo si falta alguna pieza para publicar'
+        '🔄 Seguimiento a leads contactados el martes — ¿respondieron?',
+        '📋 Revisar la sección de Cotizaciones del OPS HUB y actualizar estatus',
+        '📞 Hacer 2-3 acercamientos adicionales del pipeline',
+        '💡 Si hay objeciones frecuentes, documentarlas para ajustar el pitch'
       ],
       'Jueves': [
-        'Publicar post del jueves (preferentemente contenido educativo o de valor)',
-        'Monitoreo de comunidad: identificar usuarios frecuentes o potenciales leads',
-        'Actualizar el Calendario con lo publicado y las métricas iniciales',
-        'Proponer ideas de engagement para el fin de semana'
+        '📊 Preparar cotización formal para leads en etapa Interesado o Propuesta',
+        '📎 Subir documentación al tab de Cotizaciones: links Drive, notas, versión',
+        '📞 Llamadas de seguimiento a prospectos con propuesta enviada',
+        '🤝 Coordinar con Mario si algún lead necesita presentación ejecutiva'
       ],
       'Viernes': [
-        'Cierre de semana: reportar alcance total, interacciones y nuevos seguidores',
-        'Programar contenido del fin de semana si aplica',
-        'Identificar el post con mejor desempeño y documentarlo',
-        'Actualizar el hub con cualquier lead nuevo captado desde redes'
+        '📈 Reporte semanal a Axel: contactos hechos, respuestas, avances, etapas',
+        '✅ Actualizar todas las etapas del CRM antes del cierre',
+        '💬 Compartir con Ivonne y Ale: ¿quién tiene leads calientes para la semana siguiente?',
+        '📝 Registrar objeciones y aprendizajes de la semana en el CRM (campo notas)'
       ]
     }
   },
   'Dylan': {
-    role: 'Practicante',
-    color: '#ff8a65',
+    role: 'CM + LinkedIn',
+    color: '#0ea5e9',
     days: {
       'Lunes': [
-        'Revisar las tareas asignadas en el OPS HUB para la semana',
-        'Apoyo a Melissa: programar 1-2 posts en plataformas',
-        'Investigación de apoyo: buscar imágenes o recursos para piezas de contenido',
-        'Preguntar al equipo si hay pendientes urgentes de la semana anterior'
+        '📱 Revisar inbox de Instagram, LinkedIn y otras redes: responder todos los mensajes',
+        '📅 Confirmar con Melissa A. el video de hoy y la parrilla de la semana',
+        '📝 Escribir el post de LinkedIn del día — tema: electromovilidad o novedad del sector',
+        '🗓️ Programar los posts de la semana en el Calendario del OPS HUB'
       ],
       'Martes': [
-        'Apoyo a Alejandro: búsqueda de datos, estadísticas o noticias del sector EV',
-        'Cargar o actualizar entradas en el Banco de Assets',
-        'Monitorear comentarios en redes bajo supervisión de Melissa',
-        'Documentar cualquier observación o aprendizaje del día'
+        '📹 Publicar el video de Melissa A. en las redes que corresponda',
+        '✍️ Post de LinkedIn del día — puede ser artículo corto, reflexión o estadística',
+        '💬 Engagement: comentar en 5+ publicaciones del sector en LinkedIn',
+        '📊 Revisar métricas del lunes: alcance, likes, comentarios — documentar en OPS HUB'
       ],
       'Miércoles': [
-        'Apoyo en programación de contenido de la segunda mitad de semana',
-        'Actualizar tareas completadas en el hub',
-        'Revisión de materiales en el Banco de Assets: ¿hay algo desactualizado?',
-        'Apoyar con cualquier tarea operativa que el equipo necesite'
+        '📱 Publicar stories o contenido efímero en Instagram',
+        '✍️ Post de LinkedIn del día',
+        '📩 Revisar si algún seguidor o conexión pidió información — reportar a Ventas',
+        '🔄 Mid-week check: ¿están saliendo los posts a tiempo? ¿falta algún asset?'
       ],
       'Jueves': [
-        'Apoyo a Arturo: descarga de recursos, exportación de archivos, organización de carpetas',
-        'Seguimiento a tareas asignadas: actualizar estatus en el hub',
-        'Revisión de la guía de marca: familiarizarse con colores, tipografías y tono',
-        'Proponer al menos 1 idea de mejora para el equipo o el hub'
+        '📹 Publicar video del día',
+        '✍️ Post de LinkedIn — preferentemente contenido educativo o caso de uso EV',
+        '📊 Revisar engagement acumulado de la semana',
+        '💡 Proponer 2-3 ideas de contenido para la semana siguiente a Axel'
       ],
       'Viernes': [
-        'Completar todas las tareas asignadas antes del cierre',
-        'Actualizar estatus de sus tareas en el OPS HUB',
-        'Escribir un breve resumen de lo aprendido en la semana',
-        'Preguntar a Axel si hay algo que reforzar la semana siguiente'
+        '📈 Reporte semanal de redes: seguidores, alcance, engagement, mejor post',
+        '✅ Confirmar que todos los posts de la semana salieron según parrilla',
+        '📥 Identificar cualquier lead que haya llegado por redes — reportar al CRM',
+        '🗓️ Preparar borrador de parrilla para la semana siguiente'
       ]
     }
   },
@@ -1494,7 +1552,7 @@ var WEEKLY_GUIDE = {
         '🔄 Seguimiento a mensajes del lunes que no respondieron',
         '📤 Enviar los 5 mensajes restantes de la semana',
         '🤝 Agendar reuniones o llamadas con quienes mostraron interés',
-        '💬 Coordinar con Ale S. para no duplicar prospectos — revisar CRM juntas'
+        '💬 Coordinar con Ale S. y Melissa G. para dividir el pipeline — revisar CRM juntas'
       ],
       'Jueves': [
         '📅 Reuniones o llamadas con prospectos calificados',
@@ -1668,6 +1726,217 @@ document.querySelectorAll('.modal-overlay').forEach(function(o){
     if(e.target===o) o.classList.remove('open');
   });
 });
+
+// ═══════════════════════════════════════════════════════
+// MÓDULO COTIZACIONES (tab integrado en OPS HUB)
+// ═══════════════════════════════════════════════════════
+var DB_QUOTES = [];
+var QSTAGES = ['Pre-cotización','Cotización formal','Negociación','Cerrado-Ganado','Cerrado-Perdido'];
+var QSTAGE_COLORS = {
+  'Pre-cotización':   '#E8C615',
+  'Cotización formal':'#36CF03',
+  'Negociación':      '#F97316',
+  'Cerrado-Ganado':   '#10B981',
+  'Cerrado-Perdido':  '#EF4444'
+};
+
+function loadQuotes() {
+  loadSheet('quotes', function(rows) {
+    DB_QUOTES = rows.map(function(row) {
+      return {
+        id:           row[0]||'',
+        cliente:      row[1]||'',
+        contacto:     row[2]||'',
+        proyecto:     row[3]||'',
+        version:      row[4]||'',
+        fecha:        row[5]||'',
+        ejecutiva:    row[6]||'',
+        tipoServicio: row[7]||'',
+        estatus:      row[8]||'',
+        unidades:     row[9]||'',
+        tipoUnidad:   row[10]||'',
+        peso:         row[11]||'',
+        km:           row[12]||'',
+        combustible:  row[13]||'',
+        eficiencia:   row[14]||'',
+        mantMensual:  row[15]||'',
+        diasUso:      row[16]||'',
+        costoMant:    row[17]||'',
+        costoRep:     row[18]||'',
+        numCC:        row[19]||'',
+        dirCC:        row[20]||'',
+        unidadesCC:   row[21]||'',
+        tiempoCarga:  row[22]||'',
+        tipoCarga:    row[23]||'',
+        linkCot:      row[24]||'',
+        linkContrato: row[25]||'',
+        linkPropuesta:row[26]||'',
+        referente:    row[27]||'',
+        notas:        row[28]||'',
+        creado:       row[29]||''
+      };
+    });
+    renderQuotesTab();
+  });
+}
+
+function renderQuotesTab() {
+  var exec   = (document.getElementById('q-filter-exec')||{}).value||'';
+  var status = (document.getElementById('q-filter-status')||{}).value||'';
+  var buscar = ((document.getElementById('q-search')||{}).value||'').toLowerCase();
+
+  var list = DB_QUOTES.filter(function(q){
+    return (!exec || q.ejecutiva===exec)
+      && (!status || q.estatus===status)
+      && (!buscar || (q.cliente+q.proyecto).toLowerCase().indexOf(buscar)>=0);
+  });
+
+  // KPIs
+  var kpiEl = document.getElementById('quotes-kpis');
+  if (kpiEl) {
+    var ganadas = DB_QUOTES.filter(function(q){ return q.estatus==='Cerrado-Ganado'; }).length;
+    var negoc   = DB_QUOTES.filter(function(q){ return q.estatus==='Negociación'; }).length;
+    kpiEl.innerHTML =
+      qKpi(DB_QUOTES.length, 'Total cotizaciones', '#36CF03') +
+      qKpi(DB_QUOTES.filter(function(q){ return q.estatus==='Pre-cotización'; }).length, 'Pre-cotizaciones', '#E8C615') +
+      qKpi(negoc, 'En negociación', '#F97316') +
+      qKpi(ganadas, 'Cerradas ganadas', '#10B981');
+  }
+
+  // Pipeline kanban
+  var pEl = document.getElementById('quotes-pipeline');
+  if (pEl) {
+    pEl.innerHTML = QSTAGES.map(function(stage){
+      var items = DB_QUOTES.filter(function(q){ return q.estatus===stage; });
+      var col = QSTAGE_COLORS[stage]||'#fff';
+      return '<div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden">' +
+        '<div style="padding:7px 10px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">' +
+        '<span style="font-size:10px;font-weight:700;color:'+col+';letter-spacing:.06em">' + stage + '</span>' +
+        '<span style="font-size:11px;font-family:monospace;color:'+col+'">' + items.length + '</span></div>' +
+        '<div style="padding:6px;min-height:50px">' +
+        (items.length===0?'<div style="text-align:center;padding:10px 0;color:var(--text2);font-size:11px">—</div>':'') +
+        items.map(function(q){
+          return '<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:6px;padding:6px 8px;margin-bottom:4px;cursor:pointer;font-size:11px" onclick="showQuoteDetail(\''+q.id+'\')">' +
+            '<div style="font-weight:600;color:var(--text)">' + q.cliente + '</div>' +
+            '<div style="color:var(--text2);font-size:10px;margin-top:2px">' + q.ejecutiva + (q.unidades?' · '+q.unidades+' u.':'') + '</div>' +
+            '</div>';
+        }).join('') +
+        '</div></div>';
+    }).join('');
+  }
+
+  // Tabla
+  var tw = document.getElementById('quotes-table-wrap');
+  if (!tw) return;
+  if (list.length===0) {
+    tw.innerHTML = emptyState('💼','Sin cotizaciones','Registra la primera cotización con el formulario de abajo.');
+    return;
+  }
+  var tHTML = '<div style="overflow-x:auto"><table class="data-table"><thead><tr>' +
+    '<th>ID</th><th>Cliente</th><th>Proyecto</th><th>Ejecutiva</th><th>Estatus</th><th>Unidades</th><th>Fecha</th><th>Docs</th>' +
+    '</tr></thead><tbody>';
+  list.forEach(function(q){
+    var qc = QSTAGE_COLORS[q.estatus]||'#9d9d9c';
+    var docs = (q.linkCot?'<a href="'+q.linkCot+'" target="_blank" style="color:var(--verde);font-size:11px;margin-right:4px">📄 Cot.</a>':'') +
+               (q.linkContrato?'<a href="'+q.linkContrato+'" target="_blank" style="color:var(--amarillo);font-size:11px">📋 Contrato</a>':'');
+    tHTML += '<tr style="cursor:pointer" onclick="showQuoteDetail(\''+q.id+'\')">' +
+      '<td><code style="font-size:11px;color:var(--verde)">' + q.id + '</code></td>' +
+      '<td><strong>' + q.cliente + '</strong></td>' +
+      '<td style="color:var(--text2);font-size:12px">' + (q.proyecto.length>38?q.proyecto.slice(0,38)+'…':q.proyecto) + '</td>' +
+      '<td>' + q.ejecutiva + '</td>' +
+      '<td><span style="display:inline-block;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:700;background:'+qc+'22;color:'+qc+'">' + q.estatus + '</span></td>' +
+      '<td>' + (q.unidades||'—') + '</td>' +
+      '<td style="font-size:11px;color:var(--text2)">' + (q.fecha||'—') + '</td>' +
+      '<td>' + (docs||'<span style="color:var(--text2);font-size:11px">—</span>') + '</td>' +
+      '</tr>';
+  });
+  tHTML += '</tbody></table></div>';
+  tw.innerHTML = tHTML;
+}
+
+function showQuoteDetail(id) {
+  var q = DB_QUOTES.find(function(x){ return x.id===id; });
+  if (!q) return;
+  var qc = QSTAGE_COLORS[q.estatus]||'#9d9d9c';
+  var html = '<div style="font-weight:700;font-size:15px;margin-bottom:4px">' + q.cliente +
+    ' <span style="display:inline-block;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:700;background:'+qc+'22;color:'+qc+'">' + q.estatus + '</span></div>' +
+    '<div style="font-size:12px;color:var(--text2);margin-bottom:14px">' + q.proyecto + ' · ' + q.version + ' · ' + (q.fecha||'') + '</div>';
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px">';
+  var fields = [
+    ['Ejecutiva', q.ejecutiva], ['Contacto', q.contacto||'—'],
+    ['Tipo servicio', q.tipoServicio||'—'], ['Unidades', q.unidades?q.unidades+' veh.':'—'],
+    ['Tipo unidad', q.tipoUnidad||'—'], ['KM diarios', q.km?q.km+' km':'—'],
+    ['Peso bruto', q.peso?q.peso+' ton':'—'], ['Combustible', q.combustible?'$'+q.combustible+'/L':'—'],
+    ['Eficiencia', q.eficiencia?q.eficiencia+' km/L':'—'], ['Núm. centros carga', q.numCC||'—'],
+    ['Tipo de carga', q.tipoCarga||'—'], ['Referente', q.referente||'—']
+  ];
+  fields.forEach(function(f){
+    html += detailField(f[0], f[1]);
+  });
+  html += '</div>';
+  if (q.notas) html += '<div style="margin-top:10px"><label style="font-size:11px;color:var(--text2)">NOTAS</label><div style="font-size:12px;color:var(--text);margin-top:4px">'+q.notas+'</div></div>';
+  var docs = [];
+  if(q.linkCot) docs.push('<a href="'+q.linkCot+'" target="_blank" class="btn btn-secondary btn-sm">📄 Cotización</a>');
+  if(q.linkContrato) docs.push('<a href="'+q.linkContrato+'" target="_blank" class="btn btn-secondary btn-sm">📋 Contrato</a>');
+  if(q.linkPropuesta) docs.push('<a href="'+q.linkPropuesta+'" target="_blank" class="btn btn-secondary btn-sm">📑 Propuesta</a>');
+  html += '<div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">' + docs.join('') + '</div>';
+  document.getElementById('detail-title').innerHTML = '💼 ' + q.cliente + ' <button class="modal-close" onclick="closeModal(\'detail-modal\')">×</button>';
+  document.getElementById('detail-content').innerHTML = html;
+  document.getElementById('detail-actions').innerHTML =
+    '<button class="btn btn-secondary" onclick="closeModal(\'detail-modal\')">Cerrar</button>';
+  openModal('detail-modal');
+}
+
+function saveQuickQuote() {
+  var cliente = (document.getElementById('qf-cliente').value||'').trim();
+  if (!cliente) { toast('El nombre del cliente es requerido','error'); return; }
+  var today = new Date().toISOString().split('T')[0];
+  var q = {
+    id:           'COT-' + String(Date.now()).slice(-5),
+    cliente:      cliente,
+    contacto:     '',
+    proyecto:     document.getElementById('qf-proyecto').value||'',
+    version:      'v1.0',
+    fecha:        today,
+    ejecutiva:    document.getElementById('qf-exec').value,
+    tipoServicio: '',
+    estatus:      document.getElementById('qf-status').value,
+    unidades:     document.getElementById('qf-unidades').value||'',
+    tipoUnidad:   '', peso:'', km:'', combustible:'', eficiencia:'',
+    mantMensual:'', diasUso:'', costoMant:'', costoRep:'',
+    numCC:'', dirCC:'', unidadesCC:'', tiempoCarga:'', tipoCarga:'',
+    linkCot:      document.getElementById('qf-link').value||'',
+    linkContrato: '', linkPropuesta:'',
+    referente:    '',
+    notas:        document.getElementById('qf-notas').value||'',
+    creado:       today
+  };
+  // Optimistic UI
+  DB_QUOTES.unshift(q);
+  renderQuotesTab();
+  clearQuoteForm();
+  toast('✓ Cotización guardada');
+  // Background sync usando api() igual que el CRM
+  api({ action: 'insert', sheet: 'quotes', id: q.id, row: q }, function(ok) {
+    if (!ok) toast('⚠️ Error al sincronizar cotización', 'error');
+  });
+}
+
+function clearQuoteForm() {
+  ['qf-cliente','qf-proyecto','qf-unidades','qf-link','qf-notas'].forEach(function(id){
+    var el = document.getElementById(id);
+    if(el) el.value='';
+  });
+}
+
+function qKpi(val, label, color) {
+  return '<div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px 16px">' +
+    '<div style="font-size:11px;color:var(--text2);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px">' + label + '</div>' +
+    '<div style="font-size:26px;font-weight:700;font-family:monospace;color:' + color + '">' + val + '</div>' +
+    '</div>';
+}
+
+// Quotes tab se carga vía refreshAll al abrir la app
 </script>
 </body>
 </html>
